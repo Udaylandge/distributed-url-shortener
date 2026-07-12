@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<nav th:fragment="publicNavbar" class="public-navbar">
+
+    <div class="logo">
+        <a th:href="@{/}">
+            <i class="fa-solid fa-link"></i>
+            <span>Shortify</span>
+        </a>
+    </div>
+
+    <ul class="nav-links">
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how">How It Works</a></li>
+        <li><a href="#contact">Contact</a></li>
+    </ul>
+
+    <div class="auth-buttons">
+        <a th:href="@{/login}" class="login-btn">
+            Login
+        </a>
+
+        <a th:href="@{/register}" class="register-btn">
+            Register
+        </a>
+    </div>
+
+</nav>
+
+</body>
+</html>

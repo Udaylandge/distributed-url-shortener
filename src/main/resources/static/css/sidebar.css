@@ -1,0 +1,120 @@
+/* ==========================================================================
+   URLSHORTNER - Master Sidebar & Layout Fix (Permanent Override)
+   ========================================================================== */
+
+:root {
+    --sidebar-width: 260px;
+}
+
+/* --- Layout Wrapper --- */
+#wrapper {
+    display: flex !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+    overflow-x: hidden !important;
+    position: relative !important;
+}
+
+/* --- Fixed Sidebar --- */
+#sidebar, .sidebar {
+    width: var(--sidebar-width) !important;
+    min-width: var(--sidebar-width) !important;
+    max-width: var(--sidebar-width) !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    height: 100vh !important;
+    z-index: 1040 !important;
+    background-color: #ffffff !important;
+    border-right: 1px solid #e2e8f0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow-y: auto !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    list-style: none !important;
+}
+
+/* --- Main Page Content Offset (THE FIX) --- */
+#page-content-wrapper, .page-content {
+    margin-left: var(--sidebar-width) !important;
+    width: calc(100% - var(--sidebar-width)) !important;
+    min-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    background-color: #F8FAFC !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* --- Reset & Style List Items --- */
+.sidebar ul {
+    list-style: none !important;
+    padding-left: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.sidebar ul li {
+    list-style-type: none !important;
+    margin: 4px 10px !important;
+}
+
+.sidebar .components li a {
+    padding: 12px 18px !important;
+    display: flex !important;
+    align-items: center !important;
+    color: #0F172A !important;
+    text-decoration: none !important;
+    font-weight: 500 !important;
+    border-radius: 10px !important;
+    transition: all 0.2s ease !important;
+}
+
+.sidebar .components li a:hover,
+.sidebar .components li.active a {
+    background-color: rgba(37, 99, 235, 0.08) !important;
+    color: #2563EB !important;
+    font-weight: 600 !important;
+}
+
+.sidebar .components li.active a {
+    background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25) !important;
+}
+
+/* --- Logo & Brand --- */
+.sidebar-header {
+    padding: 18px 20px !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.logo-icon {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 10px !important;
+    background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3) !important;
+}
+
+/* --- Responsive Override for Mobile (< 992px) --- */
+@media (max-width: 991.98px) {
+    #sidebar, .sidebar {
+        left: calc(-1 * var(--sidebar-width)) !important;
+        box-shadow: none !important;
+    }
+    
+    #page-content-wrapper, .page-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+    
+    #wrapper.toggled #sidebar,
+    #wrapper.toggled .sidebar {
+        left: 0 !important;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.15) !important;
+    }
+}

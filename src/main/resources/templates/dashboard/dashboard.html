@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | URLSHORTNER</title>
+    
+    <!-- Google Fonts: Inter & Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}" href="/css/dashboard.css">
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}" href="/css/sidebar.css">
+</head>
+<body class="bg-light">
+
+    <div class="d-flex" id="wrapper">
+        <!-- Sidebar Navigation -->
+        <nav id="sidebar" class="sidebar bg-white border-end">
+            <div class="sidebar-header p-3 border-bottom d-flex align-items-center">
+                <div class="logo-icon me-2"><i class="fa-solid fa-link text-white"></i></div>
+                <span class="fw-bold fs-5 brand-text">URL<span class="text-primary">SHORTNER</span></span>
+            </div>
+            <ul class="list-unstyled components p-2">
+                <li class="active"><a th:href="@{/dashboard}" href="/dashboard"><i class="fa-solid fa-gauge me-3"></i>Dashboard</a></li>
+                <li><a th:href="@{/urls/create}" href="/urls/create"><i class="fa-solid fa-plus-circle me-3"></i>Create Short URL</a></li>
+                <li><a th:href="@{/urls/manage}" href="/urls/manage"><i class="fa-solid fa-list me-3"></i>My URLs</a></li>
+                <li><a th:href="@{/analytics}" href="/analytics"><i class="fa-solid fa-chart-line me-3"></i>Analytics</a></li>
+                <li><a th:href="@{/profile}" href="/profile"><i class="fa-solid fa-user-gear me-3"></i>Profile Settings</a></li>
+            </ul>
+            
+            <!-- Infrastructure Health Widget -->
+            <div class="sidebar-footer p-3 mt-auto border-top">
+                <div class="small fw-bold text-muted mb-2"><i class="fa-solid fa-server me-1"></i> System Status</div>
+                <div class="d-flex justify-content-between align-items-center mb-1 small">
+                    <span>Redis Cache:</span>
+                    <span class="badge bg-success-subtle text-success fw-bold"><i class="fa-solid fa-circle text-success me-1" style="font-size: 6px;"></i> Active</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-2 small">
+                    <span>MongoDB:</span>
+                    <span class="badge bg-success-subtle text-success fw-bold"><i class="fa-solid fa-circle text-success me-1" style="font-size: 6px;"></i> Connected</span>
+                </div>
+                <div class="progress" style="height: 4px;">
+                    <div class="progress-bar bg-primary" role="progressbar" style="width: 99.9%" title="99.9% Cache Hit Rate"></div>
+                </div>
+                <div class="d-flex justify-content-between mt-1" style="font-size: 10px;">
+                    <span class="text-muted">Hit Rate: 99.9%</span>
+                    <span class="text-muted">Avg: 12ms</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper" class="w-100">
+            
+            <!-- Top Navbar -->
+            <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom py-3 px-4">
+                <div class="d-flex align-items-center justify-content-between w-100">
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-light border me-3 d-lg-none" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+                        <div>
+                            <h4 class="fw-bold mb-0">Welcome Back, <span class="text-primary" th:text="${user?.fullName ?: 'Uday'}">Uday</span> 👋</h4>
+                            <p class="text-muted small mb-0">Here is what is happening across your distributed node clusters today.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <!-- Dark Mode Toggle -->
+                        <button class="btn btn-light border rounded-circle p-2" id="themeToggle" title="Toggle Theme">
+                            <i class="fa-regular fa-moon fs-5" id="themeIcon"></i>
+                        </button>
+                        <a th:href="@{/urls/create}" href="/urls/create" class="btn btn-primary-gradient px-4 py-2 fw-semibold shadow-sm d-none d-sm-block">
+                            <i class="fa-solid fa-plus me-2"></i>Shorten URL
+                        </a>
+                        <div class="dropdown">
+                            <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <div class="avatar-circle bg-primary text-white fw-bold me-2">U</div>
+                                <span class="fw-medium text-dark d-none d-md-inline" th:text="${user?.fullName ?: 'Uday'}">Uday</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+                                <li><a class="dropdown-item" th:href="@{/profile}" href="/profile"><i class="fa-solid fa-user me-2"></i>Profile</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" th:href="@{/logout}" href="/logout"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Main Dashboard Container -->
+            <div class="container-fluid p-4">
+                
+                <!-- Stat Cards Row -->
+                <div class="row g-4 mb-4">
+                    <div class="col-12 col-sm-6 col-xl-2">
+                        <div class="stat-card p-3 rounded-4 shadow-sm bg-primary text-white h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="small opacity-75 text-uppercase fw-bold">Total URLs</span>
+                                <i class="fa-solid fa-link fs-4 opacity-50"></i>
+                            </div>
+                            <h3 class="fw-bold mb-0">1,248</h3>
+                            <small class="opacity-75" style="font-size: 11px;"><i class="fa-solid fa-arrow-up"></i> +12 this week</small>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl-2">
+                        <div class="stat-card p-3 rounded-4 shadow-sm bg-secondary text-white h-100" style="background: #7C3AED !important;">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="small opacity-75 text-uppercase fw-bold">Total Clicks</span>
+                                <i class="fa-solid fa-mouse-pointer fs-4 opacity-50"></i>
+                            </div>
+                            <h3 class="fw-bold mb-0">48,920</h3>
+                            <small class="opacity-75" style="font-size: 11px;"><i class="fa-solid fa-arrow-up"></i> +24.8% vs last mo</small>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl-2">
+                        <div class="stat-card p-3 rounded-4 shadow-sm bg-success text-white h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="small opacity-75 text-uppercase fw-bold">Active URLs</span>
+                                <i class="fa-solid fa-circle-check fs-4 opacity-50"></i>
+                            </div>
+                            <h3 class="fw-bold mb-0">1,190</h3>
+                            <small class="opacity-75" style="font-size: 11px;">95.3% of total links</small>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl-2">
+                        <div class="stat-card p-3 rounded-4 shadow-sm bg-danger text-white h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="small opacity-75 text-uppercase fw-bold">Expired</span>
+                                <i class="fa-solid fa-circle-xmark fs-4 opacity-50"></i>
+                            </div>
+                            <h3 class="fw-bold mb-0">58</h3>
+                            <small class="opacity-75" style="font-size: 11px;">Auto-cleaned by TTL</small>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl-2">
+                        <div class="stat-card p-3 rounded-4 shadow-sm bg-warning text-dark h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="small opacity-75 text-uppercase fw-bold">Today's New</span>
+                                <i class="fa-solid fa-calendar-day fs-4 opacity-50"></i>
+                            </div>
+                            <h3 class="fw-bold mb-0">14</h3>
+                            <small class="opacity-75" style="font-size: 11px;">Across 4 active nodes</small>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl-2">
+                        <div class="stat-card p-3 rounded-4 shadow-sm bg-info text-white h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="small opacity-75 text-uppercase fw-bold">Redis Cache</span>
+                                <i class="fa-solid fa-bolt fs-4 opacity-50"></i>
+                            </div>
+                            <h3 class="fw-bold mb-0">12 ms</h3>
+                            <small class="opacity-75" style="font-size: 11px;">Avg redirect latency</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row (Replacing Empty Card Placeholders) -->
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-8">
+                        <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div>
+                                    <h6 class="fw-bold mb-0"><i class="fa-solid fa-chart-area text-primary me-2"></i>Clicks Performance Timeline</h6>
+                                    <small class="text-muted">Real-time traffic aggregation across all nodes</small>
+                                </div>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-outline-secondary active">7 Days</button>
+                                    <button type="button" class="btn btn-outline-secondary">30 Days</button>
+                                </div>
+                            </div>
+                            <!-- Canvas for Chart.js -->
+                            <div style="height: 300px;">
+                                <canvas id="clicksTimelineChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4">
+                        <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+                            <h6 class="fw-bold mb-1"><i class="fa-solid fa-globe text-secondary me-2"></i>Traffic Distribution</h6>
+                            <small class="text-muted d-block mb-4">Top browsers redirecting through your links</small>
+                            
+                            <!-- Canvas for Chart.js Pie Chart -->
+                            <div class="d-flex justify-content-center align-items-center" style="height: 220px;">
+                                <canvas id="browserPieChart"></canvas>
+                            </div>
+                            
+                            <!-- Custom Chart Legend -->
+                            <div class="d-flex justify-content-around mt-3 border-top pt-3 small">
+                                <span><i class="fa-solid fa-circle text-primary me-1"></i> Chrome (52%)</span>
+                                <span><i class="fa-solid fa-circle text-secondary me-1"></i> Safari (24%)</span>
+                                <span><i class="fa-solid fa-circle text-info me-1"></i> Firefox (15%)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Shortened Links Table (With Action Buttons & QR Generator) -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-2">
+                        <div>
+                            <h6 class="fw-bold mb-0"><i class="fa-solid fa-clock-rotate-left text-primary me-2"></i>Recent Shortened Links</h6>
+                            <small class="text-muted">Manage, share, and track your latest active URLs</small>
+                        </div>
+                        <a th:href="@{/urls/manage}" href="/urls/manage" class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-semibold self-start">
+                            View All Links <i class="fa-solid fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light small text-uppercase text-muted">
+                                <tr>
+                                    <th>Short Alias</th>
+                                    <th>Original Target URL</th>
+                                    <th>Clicks</th>
+                                    <th>Created</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Quick Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="small" id="recentUrlsTableBody">
+                                <!-- Populated with Mock/Real Data via JS/Thymeleaf -->
+                                <tr>
+                                    <td>
+                                        <a href="https://shortify.live/google" target="_blank" class="fw-bold text-primary text-decoration-none">
+                                            shortify.live/google <i class="fa-solid fa-arrow-up-right-from-square ms-1" style="font-size: 10px;"></i>
+                                        </a>
+                                    </td>
+                                    <td class="text-truncate" style="max-width: 250px;">
+                                        <span class="text-muted">https://www.google.com/search?q=distributed+systems+architecture</span>
+                                    </td>
+                                    <td><span class="badge bg-light text-dark border fw-bold px-2 py-1">14,289</span></td>
+                                    <td class="text-muted">12 Jul 2026</td>
+                                    <td><span class="badge bg-success-subtle text-success fw-semibold"><i class="fa-solid fa-circle me-1" style="font-size: 6px;"></i> Active</span></td>
+                                    <td class="text-end">
+                                        <div class="btn-group btn-group-sm">
+                                            <button type="button" class="btn btn-light border btn-copy" data-url="https://shortify.live/google" title="Copy URL">
+                                                <i class="fa-regular fa-copy text-dark"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-light border btn-qr" data-url="https://shortify.live/google" data-alias="google" title="View QR Code" data-bs-toggle="modal" data-bs-target="#qrModal">
+                                                <i class="fa-solid fa-qrcode text-dark"></i>
+                                            </button>
+                                            <a href="/analytics?alias=google" class="btn btn-light border" title="View Analytics">
+                                                <i class="fa-solid fa-chart-simple text-primary"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="https://shortify.live/github" target="_blank" class="fw-bold text-primary text-decoration-none">
+                                            shortify.live/github <i class="fa-solid fa-arrow-up-right-from-square ms-1" style="font-size: 10px;"></i>
+                                        </a>
+                                    </td>
+                                    <td class="text-truncate" style="max-width: 250px;">
+                                        <span class="text-muted">https://github.com/udaylandge/distributed-url-shortener</span>
+                                    </td>
+                                    <td><span class="badge bg-light text-dark border fw-bold px-2 py-1">8,432</span></td>
+                                    <td class="text-muted">10 Jul 2026</td>
+                                    <td><span class="badge bg-success-subtle text-success fw-semibold"><i class="fa-solid fa-circle me-1" style="font-size: 6px;"></i> Active</span></td>
+                                    <td class="text-end">
+                                        <div class="btn-group btn-group-sm">
+                                            <button type="button" class="btn btn-light border btn-copy" data-url="https://shortify.live/github" title="Copy URL">
+                                                <i class="fa-regular fa-copy text-dark"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-light border btn-qr" data-url="https://shortify.live/github" data-alias="github" title="View QR Code" data-bs-toggle="modal" data-bs-target="#qrModal">
+                                                <i class="fa-solid fa-qrcode text-dark"></i>
+                                            </button>
+                                            <a href="/analytics?alias=github" class="btn btn-light border" title="View Analytics">
+                                                <i class="fa-solid fa-chart-simple text-primary"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="https://shortify.live/spring" target="_blank" class="fw-bold text-primary text-decoration-none">
+                                            shortify.live/spring <i class="fa-solid fa-arrow-up-right-from-square ms-1" style="font-size: 10px;"></i>
+                                        </a>
+                                    </td>
+                                    <td class="text-truncate" style="max-width: 250px;">
+                                        <span class="text-muted">https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/</span>
+                                    </td>
+                                    <td><span class="badge bg-light text-dark border fw-bold px-2 py-1">3,190</span></td>
+                                    <td class="text-muted">08 Jul 2026</td>
+                                    <td><span class="badge bg-success-subtle text-success fw-semibold"><i class="fa-solid fa-circle me-1" style="font-size: 6px;"></i> Active</span></td>
+                                    <td class="text-end">
+                                        <div class="btn-group btn-group-sm">
+                                            <button type="button" class="btn btn-light border btn-copy" data-url="https://shortify.live/spring" title="Copy URL">
+                                                <i class="fa-regular fa-copy text-dark"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-light border btn-qr" data-url="https://shortify.live/spring" data-alias="spring" title="View QR Code" data-bs-toggle="modal" data-bs-target="#qrModal">
+                                                <i class="fa-solid fa-qrcode text-dark"></i>
+                                            </button>
+                                            <a href="/analytics?alias=spring" class="btn btn-light border" title="View Analytics">
+                                                <i class="fa-solid fa-chart-simple text-primary"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="https://shortify.live/old-promo" target="_blank" class="fw-bold text-muted text-decoration-line-through">
+                                            shortify.live/old-promo
+                                        </a>
+                                    </td>
+                                    <td class="text-truncate" style="max-width: 250px;">
+                                        <span class="text-muted">https://example.com/campaign-2025-archive</span>
+                                    </td>
+                                    <td><span class="badge bg-light text-dark border fw-bold px-2 py-1">1,420</span></td>
+                                    <td class="text-muted">01 Jan 2026</td>
+                                    <td><span class="badge bg-danger-subtle text-danger fw-semibold"><i class="fa-solid fa-circle me-1" style="font-size: 6px;"></i> Expired</span></td>
+                                    <td class="text-end">
+                                        <div class="btn-group btn-group-sm">
+                                            <button type="button" class="btn btn-light border" disabled title="Link Expired">
+                                                <i class="fa-regular fa-copy text-muted"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-light border" disabled title="Link Expired">
+                                                <i class="fa-solid fa-qrcode text-muted"></i>
+                                            </button>
+                                            <a href="/analytics?alias=old-promo" class="btn btn-light border" title="View Analytics">
+                                                <i class="fa-solid fa-chart-simple text-muted"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Code Generator & Download Modal -->
+    <div class="modal fade" id="qrModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-header border-0 pb-0">
+                    <h6 class="modal-title fw-bold"><i class="fa-solid fa-qrcode text-primary me-2"></i>QR Code Generator</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <div class="p-3 bg-light rounded-3 d-inline-block border mb-3 shadow-sm">
+                        <img id="qrModalImage" src="" alt="QR Code" class="img-fluid rounded" style="width: 180px; height: 180px;">
+                    </div>
+                    <p class="small text-muted mb-3 font-monospace text-truncate" id="qrModalUrlDisplay">https://shortify.live/alias</p>
+                    <a id="qrDownloadBtn" href="#" download="shortify-qr.png" target="_blank" class="btn btn-primary w-100 py-2 fw-semibold shadow-sm d-flex align-items-center justify-content-center">
+                        <i class="fa-solid fa-download me-2"></i>Download High-Res PNG
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Professional Toast Notification (Replaces native browser alerts) -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="actionToast" class="toast align-items-center text-white bg-dark border-0 rounded-4 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex p-1">
+                <div class="toast-body d-flex align-items-center">
+                    <i id="toastIcon" class="fa-solid fa-circle-check text-success fs-5 me-2"></i>
+                    <span id="toastMessage">URL copied to clipboard!</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom Dashboard JS -->
+    <script th:src="@{/js/dashboard.js}" src="/js/dashboard.js"></script>
+</body>
+</html>

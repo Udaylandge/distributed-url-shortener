@@ -1,0 +1,94 @@
+/* =====================================================
+   CARDS.CSS — Stat Cards with Gradients & Wave Effect
+   ===================================================== */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+}
+
+.stat-card {
+    border-radius: 18px;
+    padding: 1.5rem;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+    cursor: default;
+}
+
+.stat-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
+}
+
+.stat-card .card-body {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    position: relative;
+    z-index: 1;
+}
+
+.card-icon-wrapper {
+    width: 54px;
+    height: 54px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(4px);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.card-info h3 {
+    font-size: 0.78rem;
+    font-weight: 500;
+    opacity: 0.85;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 0.3rem;
+}
+
+.card-info .counter {
+    font-size: 1.9rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+/* ── Wave Decoration ─────────────────────────────── */
+.card-wave {
+    position: absolute;
+    bottom: -10px;
+    right: -10px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    pointer-events: none;
+}
+
+.card-wave::after {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    right: -15px;
+    bottom: -15px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* ── Gradient Presets ────────────────────────────── */
+.blue-grad   { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+.purple-grad { background: linear-gradient(135deg, #7c3aed, #6d28d9); }
+.green-grad  { background: linear-gradient(135deg, #10b981, #059669); }
+.red-grad    { background: linear-gradient(135deg, #ef4444, #dc2626); }
+.orange-grad { background: linear-gradient(135deg, #f97316, #ea580c); }
+.cyan-grad   { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+.pink-grad   { background: linear-gradient(135deg, #ec4899, #db2777); }
+.teal-grad   { background: linear-gradient(135deg, #14b8a6, #0d9488); }

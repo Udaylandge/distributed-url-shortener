@@ -1,0 +1,209 @@
+/* ==========================================================================
+   URLSHORTNER - Dashboard Module Design System
+   ========================================================================== */
+
+:root {
+    --primary: #2563EB;
+    --secondary: #7C3AED;
+    --accent: #06B6D4;
+    --bg-main: #F8FAFC;
+    --text-dark: #0F172A;
+    --text-muted: #64748B;
+    --gradient-primary: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
+    --sidebar-width: 260px;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-dark);
+    overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6, .brand-text {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* --- Layout Wrapper --- */
+#wrapper {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+}
+
+#page-content-wrapper {
+    flex: 1;
+    min-width: 0;
+    transition: all 0.3s ease;
+}
+
+/* --- Sidebar Styling --- */
+.sidebar {
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+    max-width: var(--sidebar-width);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.logo-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--gradient-primary);
+    display: flex;
+    align-items-center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+}
+
+.sidebar .components li a {
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    color: var(--text-dark);
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 10px;
+    margin-bottom: 4px;
+    transition: all 0.2s ease;
+}
+
+.sidebar .components li a:hover,
+.sidebar .components li.active a {
+    background-color: rgba(37, 99, 235, 0.08);
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.sidebar .components li.active a {
+    background: var(--gradient-primary);
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+/* --- Navbar & Avatar --- */
+.avatar-circle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+}
+
+.btn-primary-gradient {
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary-gradient:hover {
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
+}
+
+/* --- Stat Cards --- */
+.stat-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* --- Table Styling --- */
+.table th {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-bottom-width: 1px;
+}
+
+.table td {
+    padding: 14px 10px;
+}
+
+.btn-copy, .btn-qr {
+    transition: all 0.2s;
+}
+
+.btn-copy.copied {
+    background-color: #22c55e !important;
+    border-color: #22c55e !important;
+    color: white !important;
+}
+
+.btn-copy.copied i {
+    color: white !important;
+}
+
+/* --- Dark Mode Override Classes --- */
+body.dark-mode {
+    --bg-main: #0B0F19;
+    --text-dark: #F8FAFC;
+    --text-muted: #94A3B8;
+    background-color: var(--bg-main);
+    color: var(--text-dark);
+}
+
+body.dark-mode .bg-white,
+body.dark-mode .sidebar,
+body.dark-mode .navbar,
+body.dark-mode .card,
+body.dark-mode .modal-content {
+    background-color: #151C2C !important;
+    border-color: #222d42 !important;
+    color: #F8FAFC;
+}
+
+body.dark-mode .table {
+    color: #F8FAFC;
+}
+
+body.dark-mode .table-light {
+    background-color: #1E293B !important;
+    color: #94A3B8 !important;
+    border-color: #2E3E56 !important;
+}
+
+body.dark-mode .table-hover tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+body.dark-mode .btn-light {
+    background-color: #1E293B;
+    border-color: #2E3E56;
+    color: #F8FAFC;
+}
+
+body.dark-mode .text-dark {
+    color: #F8FAFC !important;
+}
+
+body.dark-mode .sidebar .components li a {
+    color: #CBD5E1;
+}
+
+/* --- Responsive Sidebar Toggle --- */
+@media (max-width: 991.98px) {
+    .sidebar {
+        margin-left: calc(-1 * var(--sidebar-width));
+        position: fixed;
+        height: 100vh;
+        top: 0;
+        left: 0;
+    }
+    
+    #wrapper.toggled .sidebar {
+        margin-left: 0;
+        box-shadow: 0 0 30px rgba(0,0,0,0.15);
+    }
+}

@@ -1,0 +1,1 @@
+console.log("Distributed URL Shortener Loaded");

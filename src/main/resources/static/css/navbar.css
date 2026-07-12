@@ -1,0 +1,208 @@
+/* =====================================================
+   NAVBAR.CSS — Glass Navigation Bar
+   ===================================================== */
+
+.glass-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    z-index: 1000;
+    box-shadow: 0 1px 12px rgba(0, 0, 0, 0.06);
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.sidebar-toggle-btn {
+    width: 40px;
+    height: 40px;
+    background: none;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    cursor: pointer;
+    color: #475569;
+    font-size: 1.1rem;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar-toggle-btn:hover {
+    background: #f1f5f9;
+    color: #2563eb;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.brand-icon {
+    font-size: 1.3rem;
+    color: #7c3aed;
+}
+
+.brand-text {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0f172a;
+    letter-spacing: 0.5px;
+}
+
+.brand-highlight { color: #7c3aed; }
+
+.project-tagline {
+    color: #94a3b8;
+    font-size: 0.8rem;
+    padding-left: 0.75rem;
+    border-left: 1px solid #e2e8f0;
+}
+
+/* ── Nav Right ─────────────────────────────────── */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.nav-create-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #7c3aed, #2563eb);
+    color: white;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 12px rgba(124, 58, 237, 0.3);
+}
+
+.nav-create-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 18px rgba(124, 58, 237, 0.45);
+}
+
+/* ── User Dropdown ──────────────────────────────── */
+.user-profile-dropdown {
+    position: relative;
+}
+
+.profile-info {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    padding: 0.4rem 0.75rem;
+    border-radius: 50px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    user-select: none;
+}
+
+.profile-info:hover {
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.08);
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #7c3aed, #2563eb);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.user-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.dropdown-arrow {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    transition: transform 0.2s;
+}
+
+.user-profile-dropdown.open .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 0.5rem;
+    min-width: 190px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+    display: none;
+    z-index: 1100;
+    animation: dropdown-in 0.15s ease;
+}
+
+@keyframes dropdown-in {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.user-profile-dropdown.open .dropdown-menu { display: block; }
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.65rem 0.85rem;
+    color: #475569;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background 0.15s, color 0.15s;
+}
+
+.dropdown-item:hover {
+    background: #f1f5f9;
+    color: #2563eb;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: #f1f5f9;
+    margin: 0.25rem 0;
+}
+
+.dropdown-logout { color: #ef4444; }
+.dropdown-logout:hover { background: rgba(239, 68, 68, 0.06); color: #dc2626; }
+
+@media (max-width: 768px) {
+    .project-tagline, .nav-create-btn span { display: none; }
+    .user-name { display: none; }
+}

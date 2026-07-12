@@ -1,0 +1,99 @@
+.hero{
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-align:center;
+
+    height:85vh;
+
+    padding:20px;
+
+}
+
+.hero h1{
+
+    font-size:60px;
+
+    color:#1E293B;
+
+    margin-bottom:20px;
+
+}
+
+.hero p{
+
+    font-size:22px;
+
+    color:#64748B;
+
+    max-width:700px;
+
+    line-height:35px;
+
+}
+
+.hero-buttons{
+
+    margin-top:40px;
+
+    display:flex;
+
+    gap:20px;
+
+}
+
+.primary-btn{
+
+    background:#2563EB;
+
+    color:white;
+
+    border:none;
+
+    padding:15px 35px;
+
+    border-radius:10px;
+
+    font-size:18px;
+
+    cursor:pointer;
+
+}
+
+.secondary-btn{
+
+    background:white;
+
+    color:#2563EB;
+
+    border:2px solid #2563EB;
+
+    padding:15px 35px;
+
+    border-radius:10px;
+
+    font-size:18px;
+
+    cursor:pointer;
+
+}
+
+.primary-btn:hover{
+
+    background:#1D4ED8;
+
+}
+
+.secondary-btn:hover{
+
+    background:#2563EB;
+
+    color:white;
+
+}

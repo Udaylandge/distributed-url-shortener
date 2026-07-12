@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Users | URL SHORTNER</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+    <th:block th:with="currentPage='admin'">
+        <div th:replace="~{layout/navbar :: navbar}"></div>
+        <div class="main-layout-wrapper">
+            <div th:replace="~{layout/sidebar :: sidebar}"></div>
+
+            <main id="main-content" class="workspace">
+                <div class="dashboard-header">
+                    <div class="header-content">
+                        <h1><i class="fa-solid fa-users text-blue"></i> User Management</h1>
+                        <p class="subtitle">View, suspend, or delete registered users.</p>
+                    </div>
+                    <a href="/admin/panel" class="btn-secondary-action">← Back to Panel</a>
+                </div>
+
+                <div th:if="${successMsg}" class="alert alert-success">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span th:text="${successMsg}">Success</span>
+                </div>
+                <div th:if="${errorMsg}" class="alert alert-danger">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span th:text="${errorMsg}">Error</span>
+                </div>
+
+                <div class="admin-tabs">
+                    <a href="/admin/panel" class="admin-tab">
+                        <i class="fa-solid fa-chart-pie"></i> Overview
+                    </a>
+                    <a href="/admin/users" class="admin-tab active">
+                        <i class="fa-solid fa-users"></i> Users
+                    </a>
+                    <a href="/admin/urls" class="admin-tab">
+                        <i class="fa-solid fa-link"></i> All URLs
+                    </a>
+                </div>
+
+                <div class="table-card glassmorphism">
+                    <div class="table-header">
+                        <h2><i class="fa-solid fa-users text-blue"></i> All Users</h2>
+                        <span class="table-count" th:text="${users.size()} + ' users'">0 users</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="u, stat : ${users}">
+                                    <td th:text="${stat.count}">1</td>
+                                    <td>
+                                        <div class="user-cell">
+                                            <div class="mini-avatar"
+                                                 th:text="${#strings.substring(u.fullName, 0, 1).toUpperCase()}">U</div>
+                                            <span th:text="${u.fullName}">Name</span>
+                                        </div>
+                                    </td>
+                                    <td th:text="${u.email}">email</td>
+                                    <td>
+                                        <span class="badge"
+                                              th:classappend="${u.role == 'ADMIN'} ? 'badge-info' : 'badge-secondary'"
+                                              th:text="${u.role}">USER</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-success" th:if="${u.active}">Active</span>
+                                        <span class="badge badge-danger" th:unless="${u.active}">Suspended</span>
+                                    </td>
+                                    <td th:text="${#temporals.format(u.createdAt, 'dd MMM yyyy')}">01 Jan 2026</td>
+                                    <td>
+                                        <div class="action-btns">
+                                            <form th:action="@{/admin/users/toggle/{id}(id=${u.id})}" method="post">
+                                                <button type="submit"
+                                                        class="btn-icon"
+                                                        th:classappend="${u.active} ? 'btn-toggle-icon' : 'btn-activate-icon'"
+                                                        th:title="${u.active} ? 'Suspend User' : 'Activate User'">
+                                                    <i class="fa-solid" th:classappend="${u.active} ? 'fa-ban' : 'fa-check'"></i>
+                                                </button>
+                                            </form>
+                                            <form th:action="@{/admin/users/delete/{id}(id=${u.id})}"
+                                                  method="post"
+                                                  onsubmit="return confirm('Permanently delete user: ' + /*[[${u.fullName}]]*/ '' + '?')">
+                                                <button type="submit" class="btn-icon btn-delete-icon" title="Delete User">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div th:replace="~{layout/footer :: footer}"></div>
+            </main>
+        </div>
+    </th:block>
+    <script th:src="@{/js/sidebar.js}"></script>
+</body>
+</html>

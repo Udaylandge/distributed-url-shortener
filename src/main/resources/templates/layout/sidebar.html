@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head></head>
+<body>
+    <aside th:fragment="sidebar" id="sidebar" class="glass-sidebar">
+        <div class="sidebar-menu-wrapper">
+            <ul class="sidebar-menu">
+                <li class="menu-item" th:classappend="${currentPage == 'dashboard'} ? 'active'">
+                    <a th:href="@{/dashboard}">
+                        <i class="fa-solid fa-chart-pie menu-icon"></i>
+                        <span class="menu-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item" th:classappend="${currentPage == 'create'} ? 'active'">
+                    <a th:href="@{/urls/create}">
+                        <i class="fa-solid fa-plus-circle menu-icon"></i>
+                        <span class="menu-text">Create Short URL</span>
+                    </a>
+                </li>
+                <li class="menu-item" th:classappend="${currentPage == 'manage'} ? 'active'">
+                    <a th:href="@{/urls/manage}">
+                        <i class="fa-solid fa-list-check menu-icon"></i>
+                        <span class="menu-text">My URLs</span>
+                    </a>
+                </li>
+                <li class="menu-item" th:classappend="${currentPage == 'analytics'} ? 'active'">
+                    <a th:href="@{/analytics}">
+                        <i class="fa-solid fa-chart-line menu-icon"></i>
+                        <span class="menu-text">Analytics</span>
+                    </a>
+                </li>
+                <li class="menu-item" th:classappend="${currentPage == 'profile'} ? 'active'">
+                    <a th:href="@{/profile}">
+                        <i class="fa-solid fa-user-gear menu-icon"></i>
+                        <span class="menu-text">Profile Settings</span>
+                    </a>
+                </li>
+                <li class="menu-item" sec:authorize="hasRole('ADMIN')"
+                    th:classappend="${currentPage == 'admin'} ? 'active'">
+                    <a th:href="@{/admin/panel}">
+                        <i class="fa-solid fa-shield-halved menu-icon"></i>
+                        <span class="menu-text">Admin Panel</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <!-- Redis Status Indicator -->
+                <div class="redis-status">
+                    <span class="status-dot online"></span>
+                    <span class="menu-text status-label">Redis Cache: Active</span>
+                </div>
+                <a href="/logout" class="logout-link">
+                    <i class="fa-solid fa-right-from-bracket menu-icon"></i>
+                    <span class="menu-text">Logout</span>
+                </a>
+            </div>
+        </div>
+    </aside>
+</body>
+</html>

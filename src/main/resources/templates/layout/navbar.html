@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head></head>
+<body>
+    <nav th:fragment="navbar" class="glass-navbar">
+        <div class="nav-left">
+            <button id="sidebar-toggle" class="sidebar-toggle-btn" aria-label="Toggle Sidebar">
+                <i class="fa-solid fa-bars-staggered"></i>
+            </button>
+            <a href="/dashboard" class="brand-logo">
+                <i class="fa-solid fa-link brand-icon"></i>
+                <span class="brand-text">URL<span class="brand-highlight">SHORTNER</span></span>
+            </a>
+            <span class="project-tagline d-none d-md-inline">Distributed URL Shortener</span>
+        </div>
+        <div class="nav-right">
+            <!-- Quick Create Button -->
+            <a href="/urls/create" class="nav-create-btn" title="Shorten a URL">
+                <i class="fa-solid fa-plus"></i>
+                <span>New URL</span>
+            </a>
+
+            <!-- User Dropdown -->
+            <div class="user-profile-dropdown" id="profileDropdown">
+                <div class="profile-info" onclick="toggleDropdown()">
+                    <div class="user-avatar" th:text="${#strings.substring(username != null ? username : 'U', 0, 1).toUpperCase()}">U</div>
+                    <span class="user-name" th:text="${username != null ? username : 'User'}">User</span>
+                    <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
+                </div>
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <a href="/profile" class="dropdown-item">
+                        <i class="fa-solid fa-user-gear"></i> My Profile
+                    </a>
+                    <a href="/analytics" class="dropdown-item">
+                        <i class="fa-solid fa-chart-line"></i> Analytics
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="/logout" class="dropdown-item dropdown-logout">
+                        <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</body>
+</html>

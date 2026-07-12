@@ -1,0 +1,120 @@
+.public-navbar{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:80px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:0 40px;
+
+    background:#fff;
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+
+    z-index:1000;
+
+    box-sizing:border-box;
+}
+
+.logo a{
+
+    text-decoration:none;
+
+    font-size:28px;
+
+    font-weight:700;
+
+    color:#2563eb;
+
+}
+
+.logo i{
+
+    margin-right:8px;
+
+}
+
+.nav-links{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    gap:35px;
+
+    list-style:none;
+
+    flex:1;
+
+    margin:0 50px;
+}
+
+.nav-links a{
+
+    text-decoration:none;
+
+    color:#333;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.nav-links a:hover{
+
+    color:#2563eb;
+
+}
+
+.auth-buttons{
+    display:flex;
+    align-items:center;
+    gap:12px;
+
+    flex-shrink:0;
+}
+
+.login-btn,
+.register-btn{
+
+    padding:11px 22px;
+
+    border-radius:50px;
+
+    text-decoration:none;
+
+    font-weight:600;
+
+    white-space:nowrap;
+}
+
+.login-btn{
+
+    border:2px solid #2563eb;
+
+    color:#2563eb;
+}
+
+.login-btn:hover{
+
+    background:#2563eb;
+
+    color:white;
+}
+
+.register-btn{
+
+    color:white;
+
+    background:linear-gradient(135deg,#2563eb,#7c3aed);
+}
+
+.register-btn:hover{
+
+    transform:translateY(-2px);
+}

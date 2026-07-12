@@ -1,0 +1,42 @@
+# Maven
+target/
+
+# IntelliJ
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Java
+*.class
+
+# Spring Boot
+*.jar
+*.war
+
+# Maven Wrapper Logs
+.mvn/wrapper/maven-wrapper.jar
+
+# Environment
+.env
+
+# Redis
+dump.rdb
+
+# Mongo
+*.lock
+
+# Node
+node_modules/
+
+# Temporary
+tmp/
+temp/
