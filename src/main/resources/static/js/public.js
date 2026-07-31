@@ -28,7 +28,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             const targetId = this.getAttribute('href');
-            if (targetId === '#') return;
+            // Only process in-page anchor links — skip full URLs or bare '#'
+            if (!targetId || targetId === '#' || !targetId.startsWith('#')) return;
             
             const targetElement = document.querySelector(targetId);
             if (targetElement) {
@@ -75,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
         counterObserver.observe(counter);
     });
 
-    // 5. LIVE DEMO: URL Shortener Interactive Experience
+    // 5. LIVE DEMO: URL Shortener Interactive Experience (calls real backend API)
     const liveForm = document.getElementById("liveShortenForm");
     const longUrlInput = document.getElementById("longUrlInput");
     const shortenBtn = document.getElementById("shortenBtn");
@@ -84,48 +85,60 @@ document.addEventListener("DOMContentLoaded", () => {
     const shortUrlDisplay = document.getElementById("shortUrlDisplay");
     const qrImage = document.getElementById("qrImage");
 
-    // Array of realistic mock Base62 hashes for demo variety
-    const mockHashes = ['a8Kd92', 'J8dk2L', 'X9vM3q', 'pL4z8W', 'mK9b2Y', 'R3xW1z'];
-
     if (liveForm) {
-        liveForm.addEventListener("submit", (e) => {
+        liveForm.addEventListener("submit", async (e) => {
             e.preventDefault();
             const inputVal = longUrlInput.value.trim();
-            
-            if (inputVal !== "") {
-                // UI Loading Feedback
-                const originalBtnText = shortenBtn.innerHTML;
-                shortenBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin me-2"></i>Shortening...`;
-                shortenBtn.disabled = true;
 
-                // Simulate Network latency (600ms) for realistic feel
-                setTimeout(() => {
-                    // Pick random hash
-                    const randomHash = mockHashes[Math.floor(Math.random() * mockHashes.length)];
-                    const generatedShortUrl = `https://shortify.live/${randomHash}`;
+            if (inputVal === "") return;
 
-                    // Update DOM Elements
-                    originalUrlDisplay.innerText = inputVal;
-                    shortUrlDisplay.innerText = generatedShortUrl;
-                    shortUrlDisplay.setAttribute("href", generatedShortUrl);
-                    
-                    // Update QR Code Image Dynamically
-                    if (qrImage) {
-                        qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(generatedShortUrl)}`;
-                    }
+            // UI Loading Feedback
+            const originalBtnText = shortenBtn.innerHTML;
+            shortenBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin me-2"></i>Shortening...`;
+            shortenBtn.disabled = true;
 
-                    // Show result box with fade animation
-                    demoResultBox.classList.remove("d-none");
+            try {
+                // Call the real backend API to create a short URL in MongoDB
+                const response = await fetch("/api/shorten", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ originalUrl: inputVal })
+                });
 
-                    // Restore button state
-                    shortenBtn.innerHTML = originalBtnText;
-                    shortenBtn.disabled = false;
+                const data = await response.json();
 
-                    // Scroll slightly if on smaller screen to reveal result
-                    if (window.innerWidth < 768) {
-                        demoResultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    }
-                }, 600);
+                if (!response.ok) {
+                    throw new Error(data.error || "Failed to shorten URL");
+                }
+
+                const generatedShortUrl = data.shortUrl;
+
+                // Update DOM Elements with REAL short URL
+                originalUrlDisplay.innerText = data.originalUrl;
+                shortUrlDisplay.innerText = generatedShortUrl;
+                shortUrlDisplay.setAttribute("href", generatedShortUrl);
+                shortUrlDisplay.setAttribute("target", "_blank");
+
+                // Update QR Code Image Dynamically
+                if (qrImage) {
+                    qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(generatedShortUrl)}`;
+                }
+
+                // Show result box with fade animation
+                demoResultBox.classList.remove("d-none");
+
+                // Scroll slightly if on smaller screen to reveal result
+                if (window.innerWidth < 768) {
+                    demoResultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+
+            } catch (err) {
+                console.error("Shorten failed:", err);
+                alert("Could not shorten URL: " + err.message);
+            } finally {
+                // Restore button state
+                shortenBtn.innerHTML = originalBtnText;
+                shortenBtn.disabled = false;
             }
         });
     }

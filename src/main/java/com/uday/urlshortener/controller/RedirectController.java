@@ -7,6 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.time.LocalDateTime;
+
 @Controller
 public class RedirectController {
 
@@ -21,8 +23,15 @@ public class RedirectController {
         this.redisTemplate = redisTemplate;
     }
 
-    @GetMapping("/{shortCode}")
+    @GetMapping("/{shortCode:[a-zA-Z0-9]{1,10}}")
     public String redirect(@PathVariable String shortCode) {
+
+        // Guard: ignore well-known browser auto-requests that are not short codes
+        if (shortCode.contains(".") || shortCode.equalsIgnoreCase("favicon")
+                || shortCode.equalsIgnoreCase("robots")
+                || shortCode.equalsIgnoreCase("sitemap")) {
+            return "redirect:/?error=not-found";
+        }
 
         // 1. Try Redis cache first (millisecond-level lookup)
         try {

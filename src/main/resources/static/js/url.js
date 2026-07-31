@@ -45,28 +45,42 @@ document.addEventListener("DOMContentLoaded", () => {
     const mockHashes = ['a8Kd92', 'J8dk2L', 'X9vM3q', 'mK9b2Y', 'R3xW1z'];
 
     if (createForm) {
-        createForm.addEventListener("submit", function (e) {
-            e.preventDefault(); // Remove this line if you want real Spring Boot backend submission!
+        createForm.addEventListener("submit", async function (e) {
+            e.preventDefault();
 
             const originalUrlVal = document.getElementById("originalUrl").value.trim();
-            const customAliasVal = document.getElementById("customAlias").value.trim();
+            const customAliasVal = document.getElementById("customAlias") ? document.getElementById("customAlias").value.trim() : "";
 
             if (!originalUrlVal) return;
 
             // UI Loading State
             const originalBtnText = generateBtn.innerHTML;
-            generateBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Processing in Redis...`;
+            generateBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Shortening...`;
             generateBtn.disabled = true;
 
-            setTimeout(() => {
-                // Determine alias
-                const finalAlias = customAliasVal !== "" ? customAliasVal : mockHashes[Math.floor(Math.random() * mockHashes.length)];
-                const generatedUrl = `https://shortify.live/${finalAlias}`;
+            try {
+                const response = await fetch("/api/shorten", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        originalUrl: originalUrlVal,
+                        customAlias: customAliasVal
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || "Failed to shorten URL");
+                }
+
+                const generatedUrl = data.shortUrl;
 
                 // Update Result Box DOM
-                resOriginalUrl.innerText = originalUrlVal;
+                resOriginalUrl.innerText = data.originalUrl;
                 resShortUrl.innerText = generatedUrl;
                 resShortUrl.setAttribute("href", generatedUrl);
+                resShortUrl.setAttribute("target", "_blank");
 
                 // Update QR Modal DOM
                 const qrImg = document.getElementById("qrModalImg");
@@ -78,17 +92,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (qrText) qrText.innerText = generatedUrl;
                 if (qrDownload) {
                     qrDownload.href = qrApiUrl;
-                    qrDownload.setAttribute("download", `shortify-${finalAlias}-qr.png`);
+                    qrDownload.setAttribute("download", `short-${data.shortCode}-qr.png`);
                 }
 
                 // Show result box with fade-in animation
                 resultBox.classList.remove("d-none");
                 resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
+            } catch (err) {
+                console.error("Shorten URL error:", err);
+                alert("Error: " + err.message);
+            } finally {
                 // Restore Button State
                 generateBtn.innerHTML = originalBtnText;
                 generateBtn.disabled = false;
-            }, 600);
+            }
         });
     }
 

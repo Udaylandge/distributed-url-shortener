@@ -1,22 +1,22 @@
 package com.uday.urlshortener.service.impl;
 
-import com.uday.urlshortener.model.Url;
-import com.uday.urlshortener.repository.UrlRepository;
-import com.uday.urlshortener.service.SequenceGeneratorService;
-import com.uday.urlshortener.service.UrlService;
-import com.uday.urlshortener.util.Base62Encoder;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import com.uday.urlshortener.model.Url;
+import com.uday.urlshortener.repository.UrlRepository;
+import com.uday.urlshortener.service.SequenceGeneratorService;
+import com.uday.urlshortener.service.UrlService;
+import com.uday.urlshortener.util.Base62Encoder;
+
 
 @Service
 public class UrlServiceImpl implements UrlService {

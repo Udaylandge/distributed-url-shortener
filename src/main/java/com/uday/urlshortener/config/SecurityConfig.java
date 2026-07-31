@@ -1,12 +1,13 @@
 package com.uday.urlshortener.config;
 
-import com.uday.urlshortener.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import com.uday.urlshortener.security.CustomUserDetailsService;
 
 @Configuration
 public class SecurityConfig {
@@ -43,11 +44,12 @@ public class SecurityConfig {
                                 "/js/**",
                                 "/images/**",
                                 "/fonts/**",
+                                "/api/**",
                                 "/error"
                         ).permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        // Short code redirect is public but will be handled carefully
-                        .requestMatchers("/{shortCode:[a-zA-Z0-9]{4,10}}").permitAll()
+                        // Short code redirect: allow 1–10 alphanumeric chars (early sequences = 1 char)
+                        .requestMatchers("/{shortCode:[a-zA-Z0-9]{1,10}}").permitAll()
                         // Everything else requires authentication
                         .anyRequest().authenticated()
                 )
