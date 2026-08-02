@@ -1,47 +1,38 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head></head>
+<html xmlns:th="http://www.thymeleaf.org">
 <body>
-    <nav th:fragment="navbar" class="glass-navbar">
-        <div class="nav-left">
-            <button id="sidebar-toggle" class="sidebar-toggle-btn" aria-label="Toggle Sidebar">
-                <i class="fa-solid fa-bars-staggered"></i>
-            </button>
-            <a href="/dashboard" class="brand-logo">
-                <i class="fa-solid fa-link brand-icon"></i>
-                <span class="brand-text">URL<span class="brand-highlight">SHORTNER</span></span>
-            </a>
-            <span class="project-tagline d-none d-md-inline">Distributed URL Shortener</span>
-        </div>
-        <div class="nav-right">
-            <!-- Quick Create Button -->
-            <a href="/urls/create" class="nav-create-btn" title="Shorten a URL">
-                <i class="fa-solid fa-plus"></i>
-                <span>New URL</span>
-            </a>
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-light bg-white border-bottom border-slate-200 sticky-top px-3 shadow-sm">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold d-flex align-items-center" th:href="@{/dashboard}">
+            <div class="brand-icon me-2 rounded-3 p-1 text-white" style="background: linear-gradient(135deg, #2563eb, #7c3aed);">
+                <i class="fa-solid fa-link"></i>
+            </div>
+            <span class="fs-4 text-dark fw-bold">Shortify</span>
+        </a>
 
-            <!-- User Dropdown -->
-            <div class="user-profile-dropdown" id="profileDropdown">
-                <div class="profile-info" onclick="toggleDropdown()">
-                    <div class="user-avatar" th:text="${#strings.substring(username != null ? username : 'U', 0, 1).toUpperCase()}">U</div>
-                    <span class="user-name" th:text="${username != null ? username : 'User'}">User</span>
-                    <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
-                </div>
-                <div class="dropdown-menu" id="dropdownMenu">
-                    <a href="/profile" class="dropdown-item">
-                        <i class="fa-solid fa-user-gear"></i> My Profile
-                    </a>
-                    <a href="/analytics" class="dropdown-item">
-                        <i class="fa-solid fa-chart-line"></i> Analytics
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a href="/logout" class="dropdown-item dropdown-logout">
-                        <i class="fa-solid fa-right-from-bracket"></i> Sign Out
-                    </a>
-                </div>
+        <div class="d-flex align-items-center ms-auto">
+            <a th:href="@{/urls/create}" class="btn btn-primary btn-sm rounded-pill px-3 me-3 d-none d-sm-inline-block">
+                <i class="fa-solid fa-plus me-1"></i>New Link
+            </a>
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary btn-sm rounded-pill dropdown-toggle text-dark" type="button" data-bs-toggle="dropdown">
+                    <i class="fa-solid fa-user-circle me-1 text-primary"></i>
+                    <span th:text="${username} ?: 'Account'">User</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+                    <li><a class="dropdown-item" th:href="@{/profile}"><i class="fa-solid fa-user me-2 text-secondary"></i>Profile Settings</a></li>
+                    <li><a class="dropdown-item" th:href="@{/urls/trash}"><i class="fa-solid fa-trash-can me-2 text-danger"></i>Recycle Bin</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <form th:action="@{/logout}" method="post">
+                            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <button type="submit" class="dropdown-item text-danger"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</button>
+                        </form>
+                    </li>
+                </ul>
             </div>
         </div>
-    </nav>
+    </div>
+</nav>
 </body>
 </html>

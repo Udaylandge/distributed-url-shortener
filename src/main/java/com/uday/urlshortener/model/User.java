@@ -19,7 +19,15 @@ public class User {
 
     private String role;
 
-    private boolean active;
+    private boolean active = true;
+
+    private boolean emailVerified = false;
+
+    private String verificationToken;
+
+    private String passwordResetToken;
+
+    private LocalDateTime resetTokenExpiry;
 
     private LocalDateTime createdAt;
 
@@ -74,6 +82,38 @@ public class User {
         this.active = active;
     }
 
+    public boolean isEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
+
+    public String getVerificationToken() {
+        return verificationToken;
+    }
+
+    public void setVerificationToken(String verificationToken) {
+        this.verificationToken = verificationToken;
+    }
+
+    public String getPasswordResetToken() {
+        return passwordResetToken;
+    }
+
+    public void setPasswordResetToken(String passwordResetToken) {
+        this.passwordResetToken = passwordResetToken;
+    }
+
+    public LocalDateTime getResetTokenExpiry() {
+        return resetTokenExpiry;
+    }
+
+    public void setResetTokenExpiry(LocalDateTime resetTokenExpiry) {
+        this.resetTokenExpiry = resetTokenExpiry;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -81,5 +121,4 @@ public class User {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
-
 }

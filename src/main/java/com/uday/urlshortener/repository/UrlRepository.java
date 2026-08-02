@@ -12,45 +12,57 @@ import java.util.Optional;
 
 public interface UrlRepository extends MongoRepository<Url, String> {
 
+    @Query("{ '$or': [ { 'shortCode': ?0 }, { 'customAlias': ?0 } ], 'deleted': { $ne: true } }")
+    Optional<Url> findByShortCodeOrCustomAlias(String identifier);
+
     Optional<Url> findByShortCode(String shortCode);
+
+    Optional<Url> findByCustomAlias(String customAlias);
 
     boolean existsByShortCode(String shortCode);
 
-    // URLs by owner
-    List<Url> findByCreatedBy(String email);
+    boolean existsByCustomAlias(String customAlias);
 
-    Page<Url> findByCreatedBy(String email, Pageable pageable);
+    // Active (non-deleted) URLs by owner — matches deleted: false OR deleted missing
+    @Query("{ 'createdBy': ?0, 'deleted': { $ne: true } }")
+    List<Url> findByCreatedByAndDeletedFalse(String email);
 
-    // Search within user's URLs
-    @Query("{ 'createdBy': ?0, '$or': [ {'originalUrl': {$regex: ?1, $options: 'i'}}, {'shortCode': {$regex: ?1, $options: 'i'}} ] }")
-    Page<Url> searchByCreatedBy(String email, String keyword, Pageable pageable);
+    @Query("{ 'createdBy': ?0, 'deleted': { $ne: true } }")
+    Page<Url> findByCreatedByAndDeletedFalse(String email, Pageable pageable);
 
-    // Active/Expired counting
-    long countByCreatedByAndActive(String email, boolean active);
+    // Soft deleted URLs by owner (Trash bin)
+    @Query("{ 'createdBy': ?0, 'deleted': true }")
+    List<Url> findByCreatedByAndDeletedTrue(String email);
 
-    long countByCreatedBy(String email);
+    @Query("{ 'createdBy': ?0, 'deleted': true }")
+    Page<Url> findByCreatedByAndDeletedTrue(String email, Pageable pageable);
 
-    // Today's URLs
-    long countByCreatedByAndCreatedAtAfter(String email, LocalDateTime since);
+    // Search within non-deleted user URLs
+    @Query("{ 'createdBy': ?0, 'deleted': { $ne: true }, '$or': [ {'originalUrl': {$regex: ?1, $options: 'i'}}, {'shortCode': {$regex: ?1, $options: 'i'}}, {'customAlias': {$regex: ?1, $options: 'i'}} ] }")
+    Page<Url> searchByCreatedByAndDeletedFalse(String email, String keyword, Pageable pageable);
 
-    // Total clicks sum - use aggregation via service
-    List<Url> findByCreatedByAndActiveOrderByCreatedAtDesc(String email, boolean active);
+    // Count queries
+    @Query(value = "{ 'createdBy': ?0, 'active': ?1, 'deleted': { $ne: true } }", count = true)
+    long countByCreatedByAndActiveAndDeletedFalse(String email, boolean active);
 
-    // Top URLs by clicks
-    List<Url> findTop5ByCreatedByOrderByClickCountDesc(String email);
+    @Query(value = "{ 'createdBy': ?0, 'deleted': { $ne: true } }", count = true)
+    long countByCreatedByAndDeletedFalse(String email);
 
-    // Expired URLs (active=true but expiryDate passed)
-    @Query("{ 'createdBy': ?0, 'active': true, 'expiryDate': { $lt: ?1 } }")
-    List<Url> findExpiredActiveUrls(String email, LocalDateTime now);
+    @Query(value = "{ 'createdBy': ?0, 'createdAt': { $gte: ?1 }, 'deleted': { $ne: true } }", count = true)
+    long countByCreatedByAndCreatedAtAfterAndDeletedFalse(String email, LocalDateTime since);
 
-    // All URLs for admin
-    Page<Url> findAll(Pageable pageable);
+    @Query("{ 'createdBy': ?0, 'deleted': { $ne: true } }")
+    List<Url> findTop5ByCreatedByAndDeletedFalseOrderByClickCountDesc(String email);
 
-    // Recent URLs
-    List<Url> findTop10ByCreatedByOrderByCreatedAtDesc(String email);
+    @Query("{ 'createdBy': ?0, 'deleted': { $ne: true } }")
+    List<Url> findTop10ByCreatedByAndDeletedFalseOrderByCreatedAtDesc(String email);
 
-    List<Url> findTop10ByOrderByCreatedAtDesc();
+    @Query("{ 'deleted': { $ne: true } }")
+    List<Url> findTop10ByDeletedFalseOrderByCreatedAtDesc();
 
-    // Analytics: expired count
-    long countByCreatedByAndExpiryDateBefore(String email, LocalDateTime now);
+    @Query(value = "{ 'createdBy': ?0, 'expiryDate': { $lt: ?1 }, 'deleted': { $ne: true } }", count = true)
+    long countByCreatedByAndExpiryDateBeforeAndDeletedFalse(String email, LocalDateTime now);
+
+    @Query("{ 'deleted': { $ne: true } }")
+    Page<Url> findByDeletedFalse(Pageable pageable);
 }

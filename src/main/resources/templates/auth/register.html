@@ -1,141 +1,84 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Account | URLSHORTNER</title>
-    
-    <!-- Google Fonts: Inter & Poppins -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome 6 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <!-- Custom Auth CSS -->
-    <link rel="stylesheet" th:href="@{/css/auth.css}" href="/css/auth.css">
+    <title>Create Free Account | Shortify</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
 </head>
-<body class="auth-body d-flex align-items-center justify-content-center min-vh-100 py-4">
+<body class="bg-light text-dark min-vh-100 d-flex align-items-center justify-content-center">
 
-    <!-- ✅ Back to Home Link (Top Left) -->
-    <a th:href="@{/}" href="/" class="back-home-link">
-        <i class="fa-solid fa-arrow-left me-2"></i>Back to Home
-    </a>
+<div class="container py-5">
+    <div class="card p-4 mx-auto shadow-sm border-0 bg-white" style="max-width: 480px; width: 100%;">
+        <div class="text-center mb-4">
+            <a th:href="@{/}" class="text-decoration-none">
+                <h2 class="fw-bold brand-text text-dark"><i class="fa-solid fa-link text-primary me-2"></i>Shortify</h2>
+            </a>
+            <p class="text-secondary small mt-1">Start shortening, tracking, and securing your links</p>
+        </div>
 
-    <!-- Floating Background Shapes -->
-    <div class="auth-shape shape-1"></div>
-    <div class="auth-shape shape-2"></div>
+        <div th:if="${error}" class="alert alert-danger py-2 small mb-3" th:text="${error}"></div>
 
-    <div class="container py-4">
-        <div class="row justify-content-center">
-            <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
-                
-                <!-- Glass Card -->
-                <div class="auth-card p-4 p-sm-5 shadow-2xl rounded-5">
-                    
-                    <!-- Logo & Header -->
-                    <div class="text-center mb-4">
-                        <div class="logo-icon mx-auto mb-3 shadow">
-                            <i class="fa-solid fa-link"></i>
-                        </div>
-                        <h3 class="fw-bold mb-1 brand-title">URLSHORTNER</h3>
-                        <p class="text-muted-light small">Create your free account</p>
-                    </div>
+        <form id="registerForm" th:action="@{/register}" th:object="${user}" method="post">
+            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
-                    <!-- Global Error Display -->
-                    <div th:if="${error}" class="alert alert-danger custom-alert d-flex align-items-center mb-4" role="alert">
-                        <i class="fa-solid fa-circle-exclamation me-2 fs-5"></i>
-                        <div th:text="${error}">An error occurred during registration.</div>
-                    </div>
-
-                    <!-- Register Form -->
-                    <form th:action="@{/register}" method="post" id="registerForm" novalidate>
-                        
-                        <!-- Full Name -->
-                        <div class="mb-3">
-                            <label for="fullName" class="form-label text-light small fw-medium">Full Name</label>
-                            <div class="input-group custom-input-group">
-                                <span class="input-group-text"><i class="fa-regular fa-user"></i></span>
-                                <input type="text" class="form-control" id="fullName" name="fullName" placeholder="Your full name" required minlength="2">
-                            </div>
-                            <div class="invalid-feedback inline-error">Please enter your full name (at least 2 characters).</div>
-                        </div>
-
-                        <!-- Email Address -->
-                        <div class="mb-3">
-                            <label for="regEmail" class="form-label text-light small fw-medium">Email Address</label>
-                            <div class="input-group custom-input-group">
-                                <span class="input-group-text"><i class="fa-regular fa-envelope"></i></span>
-                                <input type="email" class="form-control" id="regEmail" name="email" placeholder="you@example.com" required autocomplete="email">
-                            </div>
-                            <div class="invalid-feedback inline-error">Please enter a valid email address.</div>
-                        </div>
-
-                        <!-- Password -->
-                        <div class="mb-3">
-                            <label for="regPassword" class="form-label text-light small fw-medium">Password</label>
-                            <div class="input-group custom-input-group">
-                                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
-                                <input type="password" class="form-control" id="regPassword" name="password" placeholder="Minimum 8 characters" required minlength="8" autocomplete="new-password">
-                                <button class="btn toggle-password" type="button" tabindex="-1"><i class="fa-regular fa-eye"></i></button>
-                            </div>
-                            <!-- ✅ Password Strength Indicator -->
-                            <div class="password-strength-container mt-2 d-none" id="strengthContainer">
-                                <div class="progress strength-progress" style="height: 5px;">
-                                    <div class="progress-bar" id="strengthBar" role="progressbar" style="width: 0%;"></div>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center mt-1">
-                                    <span class="small text-muted-light" style="font-size: 11px;">Password strength:</span>
-                                    <span class="small fw-bold" id="strengthText" style="font-size: 11px;">Weak</span>
-                                </div>
-                            </div>
-                            <div class="invalid-feedback inline-error">Password must be at least 8 characters long.</div>
-                        </div>
-
-                        <!-- ✅ Confirm Password -->
-                        <div class="mb-3">
-                            <label for="confirmPassword" class="form-label text-light small fw-medium">Confirm Password</label>
-                            <div class="input-group custom-input-group">
-                                <span class="input-group-text"><i class="fa-solid fa-shield-check"></i></span>
-                                <input type="password" class="form-control" id="confirmPassword" placeholder="Re-enter your password" required autocomplete="new-password">
-                                <button class="btn toggle-password" type="button" tabindex="-1"><i class="fa-regular fa-eye"></i></button>
-                            </div>
-                            <div class="invalid-feedback inline-error" id="confirmPasswordError">Passwords do not match.</div>
-                        </div>
-
-                        <!-- ✅ Terms & Privacy Checkbox -->
-                        <div class="mb-4">
-                            <div class="form-check">
-                                <input class="form-check-input custom-checkbox" type="checkbox" id="termsCheck" required>
-                                <label class="form-check-label text-muted-light small cursor-pointer" for="termsCheck">
-                                    I agree to the <a href="#" class="forgot-link">Terms of Service</a> & <a href="#" class="forgot-link">Privacy Policy</a>.
-                                </label>
-                                <div class="invalid-feedback inline-error">You must agree to the terms to continue.</div>
-                            </div>
-                        </div>
-
-                        <!-- ✅ Submit Button -->
-                        <button type="submit" class="btn btn-gradient w-100 py-3 fw-bold shadow-lg d-flex align-items-center justify-content-center" id="regSubmitBtn">
-                            <span class="btn-text">Create Account <i class="fa-solid fa-user-plus ms-2"></i></span>
-                            <span class="spinner-border spinner-border-sm d-none ms-2" role="status" aria-hidden="true"></span>
-                        </button>
-                    </form>
-
-                    <!-- Footer Link -->
-                    <div class="text-center mt-4 pt-3 border-top border-light border-opacity-10 small">
-                        <span class="text-muted-light">Already have an account?</span> 
-                        <a th:href="@{/login}" href="/login" class="text-primary-light fw-bold text-decoration-none ms-1">Sign in here</a>
-                    </div>
-
+            <div class="mb-3">
+                <label for="fullName" class="form-label text-dark small fw-semibold">Full Name</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                    <input type="text" class="form-control" id="fullName" th:field="*{fullName}" placeholder="John Doe" required>
                 </div>
             </div>
+
+            <div class="mb-3">
+                <label for="regEmail" class="form-label text-dark small fw-semibold">Email Address</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+                    <input type="email" class="form-control" id="regEmail" th:field="*{email}" placeholder="you@domain.com" required autocomplete="email">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="regPassword" class="form-label text-dark small fw-semibold">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                    <input type="password" class="form-control" id="regPassword" th:field="*{password}" placeholder="At least 8 characters" required minlength="8">
+                    <button class="btn btn-outline-secondary toggle-password" type="button"><i class="fa-solid fa-eye"></i></button>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="confirmPassword" class="form-label text-dark small fw-semibold">Confirm Password</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fa-solid fa-check-double"></i></span>
+                    <input type="password" class="form-control" id="confirmPassword" placeholder="Re-enter password" required>
+                </div>
+            </div>
+
+            <div class="form-check mb-4">
+                <input class="form-check-input" type="checkbox" id="termsCheck" required>
+                <label class="form-check-label text-secondary small" for="termsCheck">
+                    I agree to Shortify Terms of Service & Privacy Policy
+                </label>
+            </div>
+
+            <button type="submit" id="regSubmitBtn" class="btn btn-primary w-100 py-2.5 rounded-pill fw-bold mb-3">
+                <span class="btn-text"><i class="fa-solid fa-user-plus me-2"></i>Create Account</span>
+                <span class="spinner-border spinner-border-sm d-none ms-2"></span>
+            </button>
+        </form>
+
+        <div class="text-center mt-3 border-top border-slate-200 pt-3">
+            <span class="text-secondary small">Already have an account?</span>
+            <a th:href="@{/login}" class="text-primary text-decoration-none fw-bold ms-1 small">Sign In</a>
         </div>
     </div>
+</div>
 
-    <!-- Bootstrap & Custom JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script th:src="@{/js/auth.js}" src="/js/auth.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/main.js}"></script>
 </body>
 </html>

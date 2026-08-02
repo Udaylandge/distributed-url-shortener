@@ -2,56 +2,90 @@ package com.uday.urlshortener.controller;
 
 import com.uday.urlshortener.model.Url;
 import com.uday.urlshortener.service.UrlService;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Controller
 public class RedirectController {
 
     private final UrlService urlService;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final PasswordEncoder passwordEncoder;
 
-    private static final String REDIS_URL_PREFIX = "url:";
+    private static final Set<String> RESERVED_KEYWORDS = Set.of(
+            "favicon", "favicon.ico", "robots", "robots.txt", "sitemap", "sitemap.xml",
+            "login", "register", "logout", "dashboard", "analytics", "profile", "admin",
+            "urls", "api", "css", "js", "images", "fonts", "error", "actuator"
+    );
 
-    public RedirectController(UrlService urlService,
-                               RedisTemplate<String, Object> redisTemplate) {
+    public RedirectController(UrlService urlService, PasswordEncoder passwordEncoder) {
         this.urlService = urlService;
-        this.redisTemplate = redisTemplate;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    @GetMapping("/{shortCode:[a-zA-Z0-9]{1,10}}")
-    public String redirect(@PathVariable String shortCode) {
+    @GetMapping("/{shortCode:[a-zA-Z0-9_-]{1,30}}")
+    public String redirect(@PathVariable String shortCode, Model model) {
 
-        // Guard: ignore well-known browser auto-requests that are not short codes
-        if (shortCode.contains(".") || shortCode.equalsIgnoreCase("favicon")
-                || shortCode.equalsIgnoreCase("robots")
-                || shortCode.equalsIgnoreCase("sitemap")) {
+        if (shortCode == null || shortCode.contains(".") || RESERVED_KEYWORDS.contains(shortCode.toLowerCase())) {
             return "redirect:/?error=not-found";
         }
 
-        // 1. Try Redis cache first (millisecond-level lookup)
-        try {
-            Object cached = redisTemplate.opsForValue().get(REDIS_URL_PREFIX + shortCode);
-            if (cached != null) {
-                // Trigger click count increment (via service to keep consistent)
-                urlService.incrementClickCount(shortCode);
-                return "redirect:" + cached.toString();
-            }
-        } catch (Exception ignored) {
-            // Redis unavailable - fallback to MongoDB
+        Url url = urlService.findByIdentifier(shortCode);
+
+        if (url == null || url.isDeleted()) {
+            return "error/404";
         }
 
-        // 2. Fallback to MongoDB
-        Url url = urlService.findByShortCode(shortCode);
-
-        if (url == null || !url.isActive()) {
-            return "redirect:/?error=not-found";
+        if (!url.isActive()) {
+            model.addAttribute("url", url);
+            return "url/disabled";
         }
 
+        if (url.getExpiryDate() != null && url.getExpiryDate().isBefore(LocalDateTime.now())) {
+            model.addAttribute("url", url);
+            return "url/expired";
+        }
+
+        if (url.getPassword() != null && !url.getPassword().isBlank()) {
+            model.addAttribute("shortCode", shortCode);
+            return "url/password";
+        }
+
+        // Increment click count only after successful resolution
+        urlService.incrementClickCount(shortCode);
+
+        return "redirect:" + url.getOriginalUrl();
+    }
+
+    @PostMapping("/url/pass/{shortCode}")
+    public String verifyPasswordAndRedirect(@PathVariable String shortCode,
+                                           @RequestParam String password,
+                                           Model model) {
+        Url url = urlService.findByIdentifier(shortCode);
+
+        if (url == null || url.isDeleted() || !url.isActive()) {
+            return "error/404";
+        }
+
+        if (url.getExpiryDate() != null && url.getExpiryDate().isBefore(LocalDateTime.now())) {
+            model.addAttribute("url", url);
+            return "url/expired";
+        }
+
+        if (url.getPassword() != null && !passwordEncoder.matches(password.trim(), url.getPassword())) {
+            model.addAttribute("shortCode", shortCode);
+            model.addAttribute("error", "Incorrect password. Please try again.");
+            return "url/password";
+        }
+
+        urlService.incrementClickCount(shortCode);
         return "redirect:" + url.getOriginalUrl();
     }
 }

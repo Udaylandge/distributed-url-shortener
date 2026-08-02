@@ -1,62 +1,48 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head></head>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
-    <aside th:fragment="sidebar" id="sidebar" class="glass-sidebar">
-        <div class="sidebar-menu-wrapper">
-            <ul class="sidebar-menu">
-                <li class="menu-item" th:classappend="${currentPage == 'dashboard'} ? 'active'">
-                    <a th:href="@{/dashboard}">
-                        <i class="fa-solid fa-chart-pie menu-icon"></i>
-                        <span class="menu-text">Dashboard</span>
-                    </a>
-                </li>
-                <li class="menu-item" th:classappend="${currentPage == 'create'} ? 'active'">
-                    <a th:href="@{/urls/create}">
-                        <i class="fa-solid fa-plus-circle menu-icon"></i>
-                        <span class="menu-text">Create Short URL</span>
-                    </a>
-                </li>
-                <li class="menu-item" th:classappend="${currentPage == 'manage'} ? 'active'">
-                    <a th:href="@{/urls/manage}">
-                        <i class="fa-solid fa-list-check menu-icon"></i>
-                        <span class="menu-text">My URLs</span>
-                    </a>
-                </li>
-                <li class="menu-item" th:classappend="${currentPage == 'analytics'} ? 'active'">
-                    <a th:href="@{/analytics}">
-                        <i class="fa-solid fa-chart-line menu-icon"></i>
-                        <span class="menu-text">Analytics</span>
-                    </a>
-                </li>
-                <li class="menu-item" th:classappend="${currentPage == 'profile'} ? 'active'">
-                    <a th:href="@{/profile}">
-                        <i class="fa-solid fa-user-gear menu-icon"></i>
-                        <span class="menu-text">Profile Settings</span>
-                    </a>
-                </li>
-                <li class="menu-item" sec:authorize="hasRole('ADMIN')"
-                    th:classappend="${currentPage == 'admin'} ? 'active'">
-                    <a th:href="@{/admin/panel}">
-                        <i class="fa-solid fa-shield-halved menu-icon"></i>
-                        <span class="menu-text">Admin Panel</span>
-                    </a>
-                </li>
-            </ul>
-
-            <div class="sidebar-footer">
-                <!-- Redis Status Indicator -->
-                <div class="redis-status">
-                    <span class="status-dot online"></span>
-                    <span class="menu-text status-label">Redis Cache: Active</span>
-                </div>
-                <a href="/logout" class="logout-link">
-                    <i class="fa-solid fa-right-from-bracket menu-icon"></i>
-                    <span class="menu-text">Logout</span>
+<nav th:fragment="sidebar" id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-white sidebar collapse border-end border-slate-200 min-vh-100 sidebar-custom">
+    <div class="position-sticky pt-3 sidebar-sticky">
+        <ul class="nav flex-column gap-1 px-2">
+            <li class="nav-item">
+                <a class="nav-link text-secondary rounded-3 px-3 py-2" th:classappend="${activeNav == 'dashboard'} ? 'active bg-primary-subtle text-primary fw-bold' : ''" th:href="@{/dashboard}">
+                    <i class="fa-solid fa-chart-pie me-2"></i>Dashboard
                 </a>
-            </div>
-        </div>
-    </aside>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-secondary rounded-3 px-3 py-2" th:classappend="${activeNav == 'create'} ? 'active bg-primary-subtle text-primary fw-bold' : ''" th:href="@{/urls/create}">
+                    <i class="fa-solid fa-plus-circle me-2"></i>Shorten URL
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-secondary rounded-3 px-3 py-2" th:classappend="${activeNav == 'manage'} ? 'active bg-primary-subtle text-primary fw-bold' : ''" th:href="@{/urls/manage}">
+                    <i class="fa-solid fa-list-check me-2"></i>My Short Links
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-secondary rounded-3 px-3 py-2" th:classappend="${activeNav == 'analytics'} ? 'active bg-primary-subtle text-primary fw-bold' : ''" th:href="@{/analytics}">
+                    <i class="fa-solid fa-chart-line me-2"></i>Analytics
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-secondary rounded-3 px-3 py-2" th:classappend="${activeNav == 'profile'} ? 'active bg-primary-subtle text-primary fw-bold' : ''" th:href="@{/profile}">
+                    <i class="fa-solid fa-user-gear me-2"></i>Account & Profile
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-secondary rounded-3 px-3 py-2" th:classappend="${activeNav == 'trash'} ? 'active bg-danger-subtle text-danger fw-bold' : ''" th:href="@{/urls/trash}">
+                    <i class="fa-solid fa-trash-can me-2"></i>Recycle Bin
+                </a>
+            </li>
+
+            <li sec:authorize="hasRole('ADMIN')" class="nav-item mt-3 pt-3 border-top border-slate-200">
+                <span class="px-3 small text-muted fw-bold text-uppercase" style="font-size: 0.75rem;">Admin Panel</span>
+                <a class="nav-link text-warning rounded-3 px-3 py-2 mt-1" th:href="@{/admin/panel}">
+                    <i class="fa-solid fa-shield-halved me-2"></i>Admin Dashboard
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
 </body>
 </html>

@@ -1,13 +1,12 @@
 package com.uday.urlshortener.config;
 
+import com.uday.urlshortener.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-import com.uday.urlshortener.security.CustomUserDetailsService;
 
 @Configuration
 public class SecurityConfig {
@@ -33,23 +32,28 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/",
                                 "/register",
                                 "/login",
+                                "/forgot-password",
+                                "/reset-password",
+                                "/verify-email",
                                 "/css/**",
                                 "/js/**",
                                 "/images/**",
                                 "/fonts/**",
                                 "/api/**",
-                                "/error"
+                                "/actuator/health",
+                                "/error",
+                                "/url/pass/**"
                         ).permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        // Short code redirect: allow 1–10 alphanumeric chars (early sequences = 1 char)
-                        .requestMatchers("/{shortCode:[a-zA-Z0-9]{1,10}}").permitAll()
+                        // Short code redirect: allow 1–30 alphanumeric, hyphens, and underscores
+                        .requestMatchers("/{shortCode:[a-zA-Z0-9_-]{1,30}}").permitAll()
                         // Everything else requires authentication
                         .anyRequest().authenticated()
                 )
@@ -60,9 +64,16 @@ public class SecurityConfig {
                         .failureUrl("/login?error=true")
                         .permitAll()
                 )
+                .rememberMe(remember -> remember
+                        .key("shortifySecretRememberMeKey2026")
+                        .tokenValiditySeconds(86400 * 30) // 30 days
+                        .rememberMeParameter("remember-me")
+                )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout=true")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID", "remember-me")
                         .permitAll()
                 );
 

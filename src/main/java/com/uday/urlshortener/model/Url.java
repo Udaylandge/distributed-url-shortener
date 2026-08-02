@@ -15,6 +15,8 @@ public class Url {
 
     private String shortCode;
 
+    private String customAlias;
+
     private String shortUrl;
 
     private long clickCount;
@@ -23,7 +25,13 @@ public class Url {
 
     private LocalDateTime expiryDate;
 
-    private boolean active;
+    private boolean active = true;
+
+    private boolean oneTime = false;
+
+    private String password;
+
+    private boolean deleted = false;
 
     private String createdBy;
 
@@ -52,6 +60,14 @@ public class Url {
 
     public void setShortCode(String shortCode) {
         this.shortCode = shortCode;
+    }
+
+    public String getCustomAlias() {
+        return customAlias;
+    }
+
+    public void setCustomAlias(String customAlias) {
+        this.customAlias = customAlias;
     }
 
     public String getShortUrl() {
@@ -94,6 +110,30 @@ public class Url {
         this.active = active;
     }
 
+    public boolean isOneTime() {
+        return oneTime;
+    }
+
+    public void setOneTime(boolean oneTime) {
+        this.oneTime = oneTime;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
     public String getCreatedBy() {
         return createdBy;
     }
@@ -101,5 +141,4 @@ public class Url {
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
-
 }

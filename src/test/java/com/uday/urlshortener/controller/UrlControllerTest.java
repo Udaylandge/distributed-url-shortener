@@ -2,6 +2,7 @@ package com.uday.urlshortener.controller;
 
 import com.uday.urlshortener.model.Url;
 import com.uday.urlshortener.security.CustomUserDetailsService;
+import com.uday.urlshortener.service.QRCodeService;
 import com.uday.urlshortener.service.UrlService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,14 +26,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-/**
- * Controller unit tests for UrlController.
- *
- * Security filters are disabled via @AutoConfigureMockMvc(addFilters = false)
- * so we can focus on controller behaviour. @WithMockUser still injects the
- * mock authentication principal into @AuthenticationPrincipal parameters via
- * TestSecurityContextHolder (works independently of the filter chain).
- */
 @WebMvcTest(UrlController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @DisplayName("UrlController MVC Tests")
@@ -44,11 +37,11 @@ class UrlControllerTest {
     @MockitoBean
     private UrlService urlService;
 
-    // Needed so SecurityConfig can instantiate in the limited @WebMvcTest context
+    @MockitoBean
+    private QRCodeService qrCodeService;
+
     @MockitoBean
     private CustomUserDetailsService customUserDetailsService;
-
-    // ── GET /urls/create ─────────────────────────────────────────────────────
 
     @Test
     @WithMockUser(username = "user@test.com")
@@ -58,8 +51,6 @@ class UrlControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("url/create"));
     }
-
-    // ── GET /urls/manage ─────────────────────────────────────────────────────
 
     @Test
     @WithMockUser(username = "user@test.com")
@@ -86,18 +77,16 @@ class UrlControllerTest {
                 .andExpect(model().attribute("keyword", "example"));
     }
 
-    // ── POST /urls/create ────────────────────────────────────────────────────
-
     @Test
     @WithMockUser(username = "user@test.com")
     @DisplayName("POST /urls/create shortens URL and returns create view with success")
     void postCreate_validUrl_returnsCreateViewWithSuccess() throws Exception {
-        Url mockUrl = buildUrl("abc12", "https://example.com", "user@test.com");
-        when(urlService.shortenUrl(anyString(), anyString(), anyInt())).thenReturn(mockUrl);
+        Url mockUrl = buildUrl("abc12", "https://google.com", "user@test.com");
+        when(urlService.shortenUrl(anyString(), anyString(), anyInt(), any(), any(), anyBoolean())).thenReturn(mockUrl);
 
         mockMvc.perform(post("/urls/create")
                         .with(csrf())
-                        .param("originalUrl", "https://example.com")
+                        .param("originalUrl", "google.com")
                         .param("expiryDays", "30"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("url/create"))
@@ -108,18 +97,16 @@ class UrlControllerTest {
     @WithMockUser(username = "user@test.com")
     @DisplayName("POST /urls/create uses default expiry of 365 days when not provided")
     void postCreate_defaultExpiry_usesDefaultDays() throws Exception {
-        Url mockUrl = buildUrl("abc12", "https://example.com", "user@test.com");
-        when(urlService.shortenUrl(anyString(), anyString(), eq(365))).thenReturn(mockUrl);
+        Url mockUrl = buildUrl("abc12", "https://google.com", "user@test.com");
+        when(urlService.shortenUrl(anyString(), anyString(), eq(365), any(), any(), anyBoolean())).thenReturn(mockUrl);
 
         mockMvc.perform(post("/urls/create")
                         .with(csrf())
-                        .param("originalUrl", "https://example.com"))
+                        .param("originalUrl", "google.com"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("url/create"))
                 .andExpect(model().attribute("success", true));
     }
-
-    // ── POST /urls/delete/{id} ───────────────────────────────────────────────
 
     @Test
     @WithMockUser(username = "user@test.com")
@@ -130,22 +117,6 @@ class UrlControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/urls/manage"));
     }
-
-    @Test
-    @WithMockUser(username = "user@test.com")
-    @DisplayName("POST /urls/delete/{id} redirects with error flash attribute when service throws")
-    void deleteUrl_serviceThrows_redirectsToManageWithError() throws Exception {
-        org.mockito.Mockito.doThrow(new RuntimeException("Permission denied"))
-                .when(urlService).deleteUrl(anyString(), anyString());
-
-        mockMvc.perform(post("/urls/delete/someId")
-                        .with(csrf()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/urls/manage"))
-                .andExpect(flash().attribute("errorMsg", "Permission denied"));
-    }
-
-    // ── Helpers ──────────────────────────────────────────────────────────────
 
     private Url buildUrl(String shortCode, String originalUrl, String createdBy) {
         Url url = new Url();

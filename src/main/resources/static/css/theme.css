@@ -1,0 +1,207 @@
+/* ==========================================================================
+   Shortify - Unified Premium Light SaaS Theme CSS
+   ========================================================================== */
+
+@import url('./variables.css');
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--bg-light);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    letter-spacing: -0.01em;
+}
+
+h1, h2, h3, h4, h5, h6, .brand-text {
+    font-family: var(--font-family);
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.025em;
+}
+
+/* --- SaaS White Cards & Elevation --- */
+.card, .glass-card {
+    background: var(--card-bg) !important;
+    border: 1px solid var(--card-border) !important;
+    border-radius: 16px;
+    box-shadow: var(--shadow-card);
+    color: var(--text-primary);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover, .glass-card:hover {
+    box-shadow: var(--shadow-hover);
+}
+
+.card-header {
+    background: #ffffff !important;
+    border-bottom: 1px solid var(--card-border) !important;
+    font-weight: 600;
+}
+
+.card-footer {
+    background: #ffffff !important;
+    border-top: 1px solid var(--card-border) !important;
+}
+
+/* --- Buttons --- */
+.btn-primary {
+    background: var(--gradient-primary) !important;
+    border: none !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(37, 99, 235, 0.35);
+    opacity: 0.95;
+}
+
+.btn-outline-secondary {
+    border-color: #cbd5e1 !important;
+    color: #475569 !important;
+    background-color: #ffffff !important;
+    font-weight: 500;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #f8fafc !important;
+    color: #1e293b !important;
+    border-color: #94a3b8 !important;
+}
+
+.btn-outline-light {
+    border-color: var(--card-border) !important;
+    color: var(--text-primary) !important;
+    background-color: #ffffff !important;
+}
+
+.btn-outline-light:hover {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+}
+
+/* --- Forms & Controls --- */
+.form-control, .form-select {
+    background-color: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    color: var(--text-primary) !important;
+    border-radius: 10px;
+    font-size: 0.95rem;
+}
+
+.form-control::placeholder {
+    color: var(--text-muted) !important;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: #ffffff !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+    color: var(--text-primary) !important;
+}
+
+.input-group-text {
+    background-color: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    color: var(--text-secondary) !important;
+}
+
+.form-check-input {
+    background-color: #ffffff;
+    border-color: #cbd5e1;
+}
+
+.form-check-input:checked {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+/* --- Clean SaaS Tables --- */
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--text-primary);
+    --bs-table-hover-bg: #f8fafc;
+    border-color: var(--card-border) !important;
+}
+
+.table th {
+    background-color: #f8fafc !important;
+    color: #475569 !important;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    border-bottom: 1px solid var(--card-border) !important;
+    padding: 0.85rem 1rem;
+}
+
+.table td {
+    vertical-align: middle;
+    border-bottom: 1px solid var(--card-border) !important;
+    padding: 0.85rem 1rem;
+}
+
+/* --- Badges --- */
+.badge {
+    padding: 0.4em 0.75em;
+    font-weight: 600;
+    border-radius: 6px;
+    letter-spacing: 0;
+}
+
+.badge-purple {
+    background-color: #f3e8ff !important;
+    color: #7c3aed !important;
+    border: 1px solid #e9d5ff;
+}
+
+.badge-primary-subtle {
+    background-color: #eff6ff !important;
+    color: #2563eb !important;
+    border: 1px solid #bfdbfe;
+}
+
+/* --- Navigation & Sidebar --- */
+.navbar-light-custom {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-bottom: 1px solid var(--card-border) !important;
+}
+
+.sidebar-custom {
+    background-color: #ffffff !important;
+    border-right: 1px solid var(--card-border) !important;
+}
+
+.sidebar-custom .nav-link {
+    color: #475569 !important;
+    font-weight: 500;
+    border-radius: 10px;
+    margin-bottom: 4px;
+    transition: all 0.2s ease;
+}
+
+.sidebar-custom .nav-link:hover {
+    color: #1e293b !important;
+    background-color: #f1f5f9 !important;
+}
+
+.sidebar-custom .nav-link.active {
+    color: #2563eb !important;
+    background-color: #eff6ff !important;
+    font-weight: 600;
+    box-shadow: none;
+}
+
+/* Text Gradients */
+.text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}

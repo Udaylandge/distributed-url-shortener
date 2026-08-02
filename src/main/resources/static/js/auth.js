@@ -1,5 +1,5 @@
 /**
- * URLSHORTNER - Authentication Interactive Scripts
+ * Shortify - Authentication Interactive Scripts
  * Handles validation, password strength meters, matching validation, and loading spinners.
  */
 

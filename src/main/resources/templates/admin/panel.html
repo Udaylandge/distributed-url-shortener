@@ -3,197 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel | URL SHORTNER</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Admin Dashboard | Shortify</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
     <link rel="stylesheet" th:href="@{/css/navbar.css}">
     <link rel="stylesheet" th:href="@{/css/sidebar.css}">
-    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
-    <link rel="stylesheet" th:href="@{/css/admin.css}">
 </head>
-<body>
-    <th:block th:with="currentPage='admin'">
-        <div th:replace="~{layout/navbar :: navbar}"></div>
-        <div class="main-layout-wrapper">
-            <div th:replace="~{layout/sidebar :: sidebar}"></div>
+<body class="dashboard-body">
 
-            <main id="main-content" class="workspace">
-                <div class="dashboard-header">
-                    <div class="header-content">
-                        <h1><i class="fa-solid fa-shield-halved text-red"></i> Admin Control Panel</h1>
-                        <p class="subtitle">System-wide user and URL management.</p>
+<div th:replace="~{layout/navbar :: navbar}"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="~{layout/sidebar :: sidebar}"></div>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-4 border-bottom border-secondary border-opacity-25">
+                <h1 class="h2 text-white fw-bold"><i class="fa-solid fa-shield-halved text-warning me-2"></i>Admin Dashboard</h1>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-dark bg-opacity-50 border-warning border-opacity-25 p-3 rounded-4">
+                        <div class="text-secondary extra-small fw-bold text-uppercase">Total Users</div>
+                        <div class="fs-3 fw-bold text-warning mt-1" th:text="${totalUsers}">0</div>
                     </div>
                 </div>
-
-                <!-- Flash Messages -->
-                <div th:if="${successMsg}" class="alert alert-success">
-                    <i class="fa-solid fa-circle-check"></i>
-                    <span th:text="${successMsg}">Success</span>
-                </div>
-                <div th:if="${errorMsg}" class="alert alert-danger">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                    <span th:text="${errorMsg}">Error</span>
-                </div>
-
-                <!-- Admin Stats -->
-                <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
-                    <div class="stat-card blue-grad">
-                        <div class="card-body">
-                            <div class="card-icon-wrapper"><i class="fa-solid fa-users"></i></div>
-                            <div class="card-info">
-                                <h3>Total Users</h3>
-                                <p class="counter" th:text="${totalUsers}">0</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="stat-card green-grad">
-                        <div class="card-body">
-                            <div class="card-icon-wrapper"><i class="fa-solid fa-user-check"></i></div>
-                            <div class="card-info">
-                                <h3>Active Users</h3>
-                                <p class="counter" th:text="${activeUsers}">0</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="stat-card purple-grad">
-                        <div class="card-body">
-                            <div class="card-icon-wrapper"><i class="fa-solid fa-link"></i></div>
-                            <div class="card-info">
-                                <h3>Total URLs</h3>
-                                <p class="counter" th:text="${totalUrls}">0</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="stat-card cyan-grad">
-                        <div class="card-body">
-                            <div class="card-icon-wrapper"><i class="fa-solid fa-arrow-pointer"></i></div>
-                            <div class="card-info">
-                                <h3>Total Clicks</h3>
-                                <p class="counter" th:text="${totalClicks}">0</p>
-                            </div>
-                        </div>
+                <div class="col-md-3">
+                    <div class="card bg-dark bg-opacity-50 border-secondary border-opacity-25 p-3 rounded-4">
+                        <div class="text-secondary extra-small fw-bold text-uppercase">Active Users</div>
+                        <div class="fs-3 fw-bold text-success mt-1" th:text="${activeUsers}">0</div>
                     </div>
                 </div>
-
-                <!-- Admin Nav Tabs -->
-                <div class="admin-tabs">
-                    <a href="/admin/panel" class="admin-tab active">
-                        <i class="fa-solid fa-chart-pie"></i> Overview
-                    </a>
-                    <a href="/admin/users" class="admin-tab">
-                        <i class="fa-solid fa-users"></i> Users
-                    </a>
-                    <a href="/admin/urls" class="admin-tab">
-                        <i class="fa-solid fa-link"></i> All URLs
-                    </a>
-                </div>
-
-                <!-- Recent Users Table -->
-                <div class="table-card glassmorphism">
-                    <div class="table-header">
-                        <h2><i class="fa-solid fa-users text-blue"></i> Registered Users</h2>
-                        <a href="/admin/users" class="view-all-link">View All →</a>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="custom-table">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Role</th>
-                                    <th>Status</th>
-                                    <th>Joined</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="u : ${users}">
-                                    <td>
-                                        <div class="user-cell">
-                                            <div class="mini-avatar" th:text="${#strings.substring(u.fullName, 0, 1).toUpperCase()}">U</div>
-                                            <span th:text="${u.fullName}">Name</span>
-                                        </div>
-                                    </td>
-                                    <td th:text="${u.email}">email@example.com</td>
-                                    <td><span class="badge" th:classappend="${u.role == 'ADMIN'} ? 'badge-info' : 'badge-secondary'" th:text="${u.role}">USER</span></td>
-                                    <td>
-                                        <span class="badge badge-success" th:if="${u.active}">Active</span>
-                                        <span class="badge badge-danger" th:unless="${u.active}">Suspended</span>
-                                    </td>
-                                    <td th:text="${#temporals.format(u.createdAt, 'dd MMM yyyy')}">01 Jan 2026</td>
-                                    <td>
-                                        <div class="action-btns">
-                                            <form th:action="@{/admin/users/toggle/{id}(id=${u.id})}" method="post">
-                                                <button type="submit" class="btn-icon btn-toggle-icon" th:title="${u.active} ? 'Suspend' : 'Activate'">
-                                                    <i class="fa-solid" th:classappend="${u.active} ? 'fa-ban' : 'fa-check'"></i>
-                                                </button>
-                                            </form>
-                                            <form th:action="@{/admin/users/delete/{id}(id=${u.id})}"
-                                                  method="post"
-                                                  onsubmit="return confirm('Permanently delete this user?')">
-                                                <button type="submit" class="btn-icon btn-delete-icon" title="Delete">
-                                                    <i class="fa-solid fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <div class="col-md-3">
+                    <div class="card bg-dark bg-opacity-50 border-secondary border-opacity-25 p-3 rounded-4">
+                        <div class="text-secondary extra-small fw-bold text-uppercase">System URLs</div>
+                        <div class="fs-3 fw-bold text-white mt-1" th:text="${totalUrls}">0</div>
                     </div>
                 </div>
-
-                <!-- Recent URLs Table -->
-                <div class="table-card glassmorphism">
-                    <div class="table-header">
-                        <h2><i class="fa-solid fa-link text-purple"></i> Recent URLs (System-wide)</h2>
-                        <a href="/admin/urls" class="view-all-link">View All →</a>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="custom-table">
-                            <thead>
-                                <tr>
-                                    <th>Short Code</th>
-                                    <th>Original URL</th>
-                                    <th>Owner</th>
-                                    <th>Clicks</th>
-                                    <th>Created</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="url : ${recentUrls}">
-                                    <td>
-                                        <a th:href="${url.shortUrl}" target="_blank" class="short-link">
-                                            <span th:text="${url.shortCode}">code</span>
-                                        </a>
-                                    </td>
-                                    <td class="truncate" th:text="${url.originalUrl}">URL</td>
-                                    <td th:text="${url.createdBy}">owner</td>
-                                    <td><span class="click-badge" th:text="${url.clickCount}">0</span></td>
-                                    <td th:text="${#temporals.format(url.createdAt, 'dd MMM yyyy')}">01 Jan 2026</td>
-                                    <td>
-                                        <form th:action="@{/admin/urls/delete/{id}(id=${url.id})}"
-                                              method="post"
-                                              onsubmit="return confirm('Delete this URL?')">
-                                            <button type="submit" class="btn-icon btn-delete-icon" title="Delete">
-                                                <i class="fa-solid fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <div class="col-md-3">
+                    <div class="card bg-dark bg-opacity-50 border-secondary border-opacity-25 p-3 rounded-4">
+                        <div class="text-secondary extra-small fw-bold text-uppercase">System Clicks</div>
+                        <div class="fs-3 fw-bold text-info mt-1" th:text="${totalClicks}">0</div>
                     </div>
                 </div>
+            </div>
 
-                <div th:replace="~{layout/footer :: footer}"></div>
-            </main>
-        </div>
-    </th:block>
+            <div class="d-flex gap-3 mb-4">
+                <a th:href="@{/admin/users}" class="btn btn-warning text-dark fw-bold rounded-pill px-4"><i class="fa-solid fa-users me-2"></i>Manage All Users</a>
+                <a th:href="@{/admin/urls}" class="btn btn-outline-light rounded-pill px-4"><i class="fa-solid fa-link me-2"></i>Manage All System URLs</a>
+            </div>
+        </main>
+    </div>
+</div>
 
-    <script th:src="@{/js/sidebar.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

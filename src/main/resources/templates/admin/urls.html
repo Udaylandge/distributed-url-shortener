@@ -3,119 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin URLs | URL SHORTNER</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>All System URLs | Shortify Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
     <link rel="stylesheet" th:href="@{/css/navbar.css}">
     <link rel="stylesheet" th:href="@{/css/sidebar.css}">
-    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
-    <link rel="stylesheet" th:href="@{/css/admin.css}">
 </head>
-<body>
-    <th:block th:with="currentPage='admin'">
-        <div th:replace="~{layout/navbar :: navbar}"></div>
-        <div class="main-layout-wrapper">
-            <div th:replace="~{layout/sidebar :: sidebar}"></div>
+<body class="dashboard-body">
 
-            <main id="main-content" class="workspace">
-                <div class="dashboard-header">
-                    <div class="header-content">
-                        <h1><i class="fa-solid fa-link text-purple"></i> All URLs</h1>
-                        <p class="subtitle">System-wide URL management with delete controls.</p>
-                    </div>
-                    <a href="/admin/panel" class="btn-secondary-action">← Back to Panel</a>
-                </div>
+<div th:replace="~{layout/navbar :: navbar}"></div>
 
-                <div th:if="${successMsg}" class="alert alert-success">
-                    <i class="fa-solid fa-circle-check"></i>
-                    <span th:text="${successMsg}">Success</span>
-                </div>
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="~{layout/sidebar :: sidebar}"></div>
 
-                <div class="admin-tabs">
-                    <a href="/admin/panel" class="admin-tab">
-                        <i class="fa-solid fa-chart-pie"></i> Overview
-                    </a>
-                    <a href="/admin/users" class="admin-tab">
-                        <i class="fa-solid fa-users"></i> Users
-                    </a>
-                    <a href="/admin/urls" class="admin-tab active">
-                        <i class="fa-solid fa-link"></i> All URLs
-                    </a>
-                </div>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-4 border-bottom border-secondary border-opacity-25">
+                <h1 class="h2 text-white fw-bold"><i class="fa-solid fa-link text-warning me-2"></i>All System URLs</h1>
+                <a th:href="@{/admin/panel}" class="btn btn-outline-light btn-sm rounded-pill"><i class="fa-solid fa-arrow-left me-1"></i>Admin Dashboard</a>
+            </div>
 
-                <div class="table-card glassmorphism">
-                    <div class="table-header">
-                        <h2><i class="fa-solid fa-link text-purple"></i> All Shortened URLs</h2>
-                        <span class="table-count" th:text="${urlPage.totalElements} + ' total'">0 total</span>
-                    </div>
+            <div th:if="${successMsg}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="${successMsg}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="card bg-dark bg-opacity-50 border-secondary border-opacity-25 rounded-4 shadow-sm">
+                <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="custom-table">
+                        <table class="table table-dark table-hover align-middle mb-0">
                             <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Short Code</th>
-                                    <th>Original URL</th>
-                                    <th>Owner</th>
-                                    <th>Clicks</th>
-                                    <th>Created</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
+                            <tr>
+                                <th>Short URL / Code</th>
+                                <th>Target Destination</th>
+                                <th>Owner</th>
+                                <th>Clicks</th>
+                                <th>Actions</th>
+                            </tr>
                             </thead>
                             <tbody>
-                                <tr th:each="url, stat : ${urlPage.content}">
-                                    <td th:text="${stat.count + currentPage * 15}">1</td>
-                                    <td>
-                                        <a th:href="${url.shortUrl}" target="_blank" class="short-link">
-                                            <span th:text="${url.shortCode}">code</span>
-                                        </a>
-                                    </td>
-                                    <td class="truncate" th:text="${url.originalUrl}" th:title="${url.originalUrl}">URL</td>
-                                    <td th:text="${url.createdBy}">owner</td>
-                                    <td><span class="click-badge" th:text="${url.clickCount}">0</span></td>
-                                    <td th:text="${#temporals.format(url.createdAt, 'dd MMM yyyy')}">01 Jan 2026</td>
-                                    <td>
-                                        <span class="badge badge-success" th:if="${url.active}">Active</span>
-                                        <span class="badge badge-danger" th:unless="${url.active}">Inactive</span>
-                                    </td>
-                                    <td>
-                                        <form th:action="@{/admin/urls/delete/{id}(id=${url.id})}"
-                                              method="post"
-                                              onsubmit="return confirm('Delete URL: ' + /*[[${url.shortCode}]]*/ '' + '?')">
-                                            <button type="submit" class="btn-icon btn-delete-icon" title="Delete">
-                                                <i class="fa-solid fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
+                            <tr th:each="url : ${urlPage.content}">
+                                <td>
+                                    <a th:href="${url.shortUrl}" target="_blank" class="fw-bold text-primary text-decoration-none" th:text="${url.shortUrl}">http://localhost/abc</a>
+                                </td>
+                                <td class="text-truncate text-secondary" style="max-width: 300px;" th:text="${url.originalUrl}">Destination</td>
+                                <td class="small text-info" th:text="${url.createdBy}">Owner</td>
+                                <td><span class="badge bg-secondary" th:text="${url.clickCount}">0</span></td>
+                                <td>
+                                    <form th:action="@{'/admin/urls/delete/' + ${url.id}}" method="post" class="d-inline" onsubmit="return confirm('Purge this URL from system?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill"><i class="fa-solid fa-trash"></i> Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
-
-                    <!-- Pagination -->
-                    <div th:if="${totalPages > 1}" class="pagination-wrapper">
-                        <a th:if="${currentPage > 0}"
-                           th:href="@{/admin/urls(page=${currentPage - 1})}"
-                           class="page-btn">
-                            <i class="fa-solid fa-chevron-left"></i> Prev
-                        </a>
-                        <span class="page-info">
-                            Page <strong th:text="${currentPage + 1}">1</strong> of <strong th:text="${totalPages}">1</strong>
-                        </span>
-                        <a th:if="${currentPage + 1 < totalPages}"
-                           th:href="@{/admin/urls(page=${currentPage + 1})}"
-                           class="page-btn">
-                            Next <i class="fa-solid fa-chevron-right"></i>
-                        </a>
-                    </div>
                 </div>
+            </div>
+        </main>
+    </div>
+</div>
 
-                <div th:replace="~{layout/footer :: footer}"></div>
-            </main>
-        </div>
-    </th:block>
-    <script th:src="@{/js/sidebar.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -30,20 +30,16 @@ public class DashboardController {
         String email = userDetails.getUsername();
         User user = userService.findByEmail(email);
 
-        // 1. Live Statistics from MongoDB
         DashboardStatsDto stats = new DashboardStatsDto(
                 urlService.countByUser(email),
                 urlService.sumClicksByUser(email),
                 urlService.countActiveByUser(email),
                 urlService.countExpiredByUser(email),
                 urlService.countTodayByUser(email),
-                0L  // QR placeholder - to be wired when QR feature is added
+                urlService.countByUser(email) // Total links with active QR codes
         );
 
-        // 2. Recent URLs for table
         List<Url> recentUrls = urlService.getRecentUrlsByUser(email);
-
-        // 3. Top URLs for analytics
         List<Url> topUrls = urlService.getTopUrlsByUser(email);
 
         model.addAttribute("username", user.getFullName());

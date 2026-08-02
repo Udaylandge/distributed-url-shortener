@@ -30,14 +30,15 @@ class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private EmailService emailService;
+
     private UserServiceImpl userService;
 
     @BeforeEach
     void setUp() {
-        userService = new UserServiceImpl(userRepository, passwordEncoder);
+        userService = new UserServiceImpl(userRepository, passwordEncoder, emailService);
     }
-
-    // ── register ─────────────────────────────────────────────────────────────
 
     @Test
     @DisplayName("register saves new user with encoded password and USER role")
@@ -69,8 +70,6 @@ class UserServiceTest {
         verify(userRepository, never()).save(any());
     }
 
-    // ── emailExists ──────────────────────────────────────────────────────────
-
     @Test
     @DisplayName("emailExists returns true when email is registered")
     void emailExists_registeredEmail_returnsTrue() {
@@ -84,8 +83,6 @@ class UserServiceTest {
         when(userRepository.existsByEmail("nope@test.com")).thenReturn(false);
         assertThat(userService.emailExists("nope@test.com")).isFalse();
     }
-
-    // ── findByEmail ──────────────────────────────────────────────────────────
 
     @Test
     @DisplayName("findByEmail returns user when found")
@@ -108,8 +105,6 @@ class UserServiceTest {
                 .hasMessageContaining("not found");
     }
 
-    // ── updateProfile ────────────────────────────────────────────────────────
-
     @Test
     @DisplayName("updateProfile changes fullName and saves")
     void updateProfile_validUser_updatesName() {
@@ -123,18 +118,16 @@ class UserServiceTest {
         verify(userRepository).save(user);
     }
 
-    // ── changePassword ───────────────────────────────────────────────────────
-
     @Test
     @DisplayName("changePassword succeeds when current password matches")
     void changePassword_correctCurrentPassword_updatesPassword() {
         User user = buildUser("User", "user@test.com", "encodedOld");
         when(userRepository.findByEmail("user@test.com")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("oldPass", "encodedOld")).thenReturn(true);
-        when(passwordEncoder.encode("newPass")).thenReturn("encodedNew");
+        when(passwordEncoder.encode("newPass8Char")).thenReturn("encodedNew");
         when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        userService.changePassword("user@test.com", "oldPass", "newPass");
+        userService.changePassword("user@test.com", "oldPass", "newPass8Char");
 
         assertThat(user.getPassword()).isEqualTo("encodedNew");
         verify(userRepository).save(user);
@@ -147,14 +140,12 @@ class UserServiceTest {
         when(userRepository.findByEmail("user@test.com")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("wrongPass", "encodedOld")).thenReturn(false);
 
-        assertThatThrownBy(() -> userService.changePassword("user@test.com", "wrongPass", "newPass"))
+        assertThatThrownBy(() -> userService.changePassword("user@test.com", "wrongPass", "newPass8Char"))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("incorrect");
 
         verify(userRepository, never()).save(any());
     }
-
-    // ── toggleUserActive ─────────────────────────────────────────────────────
 
     @Test
     @DisplayName("toggleUserActive flips active status from true to false")
@@ -184,8 +175,6 @@ class UserServiceTest {
         assertThat(user.isActive()).isTrue();
     }
 
-    // ── countActiveUsers ─────────────────────────────────────────────────────
-
     @Test
     @DisplayName("countActiveUsers returns count of active users only")
     void countActiveUsers_mixedUsers_returnsActiveCount() {
@@ -200,8 +189,6 @@ class UserServiceTest {
 
         assertThat(userService.countActiveUsers()).isEqualTo(2L);
     }
-
-    // ── Helpers ──────────────────────────────────────────────────────────────
 
     private User buildUser(String fullName, String email, String password) {
         User user = new User();

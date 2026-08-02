@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recycle Bin | Shortify</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+</head>
+<body class="bg-light text-dark">
+
+<div th:replace="~{layout/navbar :: navbar}"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="~{layout/sidebar :: sidebar}"></div>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom border-slate-200">
+                <h1 class="h2 text-dark fw-bold"><i class="fa-solid fa-trash-can text-danger me-2"></i>Recycle Bin</h1>
+                <a th:href="@{/urls/manage}" class="btn btn-outline-secondary btn-sm rounded-pill"><i class="fa-solid fa-arrow-left me-1"></i>Back to My Links</a>
+            </div>
+
+            <div th:if="${successMsg}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="${successMsg}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <div th:if="${errorMsg}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="${errorMsg}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="card border-0 shadow-sm bg-white">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead>
+                            <tr>
+                                <th>Short Code / Alias</th>
+                                <th>Original URL</th>
+                                <th>Clicks</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="url : ${trashPage.content}">
+                                <td>
+                                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 fw-bold me-1" th:text="${url.shortCode}">code</span>
+                                    <small th:if="${url.customAlias}" class="text-primary" th:text="'(' + ${url.customAlias} + ')'"></small>
+                                </td>
+                                <td class="text-truncate text-secondary" style="max-width: 300px;" th:text="${url.originalUrl}">http://target</td>
+                                <td th:text="${url.clickCount}">0</td>
+                                <td>
+                                    <form th:action="@{'/urls/restore/' + ${url.id}}" method="post" class="d-inline">
+                                        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                        <button type="submit" class="btn btn-sm btn-outline-success rounded-pill me-1"><i class="fa-solid fa-rotate-left me-1"></i>Restore</button>
+                                    </form>
+                                    <form th:action="@{'/urls/permanent-delete/' + ${url.id}}" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to permanently delete this URL?');">
+                                        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill"><i class="fa-solid fa-fire me-1"></i>Purge</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(trashPage.content)}">
+                                <td colspan="4" class="text-center py-4 text-secondary">Trash bin is empty.</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

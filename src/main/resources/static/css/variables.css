@@ -1,0 +1,49 @@
+/* ==========================================================================
+   Shortify - Global CSS Variables & Design System Tokens (Light SaaS Theme)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    /* Base Background Colors */
+    --bg-light: #f8fafc;
+    --bg-surface: #ffffff;
+    --bg-subtle: #f1f5f9;
+
+    /* Card & Glass Tokens */
+    --card-bg: #ffffff;
+    --card-border: #e2e8f0;
+    --card-bg-glass: rgba(255, 255, 255, 0.85);
+
+    /* Brand Accent Colors */
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --secondary: #7c3aed;
+    --secondary-hover: #6d28d9;
+    --accent-cyan: #0891b2;
+
+    /* State Indicators */
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --info: #3b82f6;
+
+    /* Typography Colors */
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    --gradient-subtle: linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%);
+    --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+
+    /* Typography */
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+    /* Shadows & Elevation */
+    --glass-blur: blur(12px);
+    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    --shadow-hover: 0 10px 25px -5px rgba(37, 99, 235, 0.12), 0 8px 10px -6px rgba(37, 99, 235, 0.08);
+    --shadow-glow: 0 0 15px rgba(37, 99, 235, 0.25);
+}

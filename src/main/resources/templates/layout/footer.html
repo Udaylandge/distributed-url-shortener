@@ -1,17 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head></head>
 <body>
-    <footer th:fragment="footer" class="glass-footer">
-        <div class="footer-container">
-            <div class="footer-left">
-                <span class="status-indicator online"></span>
-                <span>&nbsp;All systems operational &mdash; MongoDB + Redis connected</span>
-            </div>
-            <div class="footer-right">
-                <span>URL<strong>SHORTNER</strong> &copy; 2026 &mdash; Distributed URL Management Platform</span>
-            </div>
-        </div>
-    </footer>
+<footer th:fragment="footer" class="footer mt-auto py-4 bg-white border-top border-slate-200 text-secondary">
+    <div class="container text-center">
+        <p class="mb-1 small">&copy; 2026 <strong class="text-dark">Shortify</strong> - Enterprise Distributed URL Shortener. All rights reserved.</p>
+        <p class="mb-0 extra-small text-muted">Powered by Spring Boot 3.5 &bull; MongoDB Atlas &bull; Redis Cache &bull; Java 21</p>
+    </div>
+</footer>
 </body>
 </html>

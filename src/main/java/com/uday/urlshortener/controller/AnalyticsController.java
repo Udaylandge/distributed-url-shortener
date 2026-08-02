@@ -1,5 +1,6 @@
 package com.uday.urlshortener.controller;
 
+import com.uday.urlshortener.dto.UrlAnalyticsDto;
 import com.uday.urlshortener.model.Url;
 import com.uday.urlshortener.model.User;
 import com.uday.urlshortener.service.UrlService;
@@ -32,7 +33,7 @@ public class AnalyticsController {
         String email = userDetails.getUsername();
         User user = userService.findByEmail(email);
 
-        List<Url> topUrls = urlService.getTopUrlsByUser(email);
+        List<UrlAnalyticsDto> topAnalytics = urlService.getTopUrlAnalyticsByUser(email);
         List<Url> recentUrls = urlService.getRecentUrlsByUser(email);
         List<Url> allUrls = urlService.getUrlsByUser(email);
 
@@ -40,11 +41,11 @@ public class AnalyticsController {
         long totalUrls = urlService.countByUser(email);
         long activeUrls = urlService.countActiveByUser(email);
 
-        model.addAttribute("username", user.getFullName());
+        model.addAttribute("username", user != null && user.getFullName() != null ? user.getFullName() : email);
         model.addAttribute("user", user);
-        model.addAttribute("topUrls", topUrls);
-        model.addAttribute("recentUrls", recentUrls);
-        model.addAttribute("allUrls", allUrls);
+        model.addAttribute("topAnalytics", topAnalytics != null ? topAnalytics : List.of());
+        model.addAttribute("recentUrls", recentUrls != null ? recentUrls : List.of());
+        model.addAttribute("allUrls", allUrls != null ? allUrls : List.of());
         model.addAttribute("totalClicks", totalClicks);
         model.addAttribute("totalUrls", totalUrls);
         model.addAttribute("activeUrls", activeUrls);
